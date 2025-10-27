@@ -1,8 +1,8 @@
 package com.comp2042.controller;
 
 import com.comp2042.*;
-import com.comp2042.model.scoring.game.Board;
-import com.comp2042.model.scoring.game.SimpleBoard;
+import com.comp2042.model.game.Board;
+import com.comp2042.model.game.SimpleBoard;
 import com.comp2042.view.GuiController;
 
 public class GameController implements InputEventListener {

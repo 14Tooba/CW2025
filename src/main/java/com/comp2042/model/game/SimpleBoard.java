@@ -1,4 +1,4 @@
-package com.comp2042.model.scoring.game;
+package com.comp2042.model.game;
 
 import com.comp2042.ClearRow;
 import com.comp2042.NextShapeInfo;
