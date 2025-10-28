@@ -1,8 +1,13 @@
-package com.comp2042;
+package com.comp2042.model.game;
 
+import com.comp2042.ClearRow;
+import com.comp2042.NextShapeInfo;
+import com.comp2042.ViewData;
 import com.comp2042.logic.bricks.Brick;
 import com.comp2042.logic.bricks.BrickGenerator;
 import com.comp2042.logic.bricks.RandomBrickGenerator;
+import com.comp2042.model.scoring.Score;
+import com.comp2042.utils.MatrixOperations;
 
 import java.awt.*;
 

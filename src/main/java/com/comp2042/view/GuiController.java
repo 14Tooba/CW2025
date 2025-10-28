@@ -1,5 +1,7 @@
-package com.comp2042;
+package com.comp2042.view;
 
+import com.comp2042.*;
+import com.comp2042.controller.InputEventListener;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
