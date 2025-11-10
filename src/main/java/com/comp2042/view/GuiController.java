@@ -48,6 +48,7 @@ public class GuiController implements Initializable {
     private Rectangle[][] rectangles;
 
     private Timeline timeLine;
+    private GameTimer gameTimer;
 
     private final BooleanProperty isPause = new SimpleBooleanProperty();
 
@@ -122,6 +123,10 @@ public class GuiController implements Initializable {
         ));
         timeLine.setCycleCount(Timeline.INDEFINITE);
         timeLine.play();
+
+        //initialize GameTimer method
+        gameTimer = new GameTimer(400, () -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD)));
+        gameTimer.start();
     }
 
     private Paint getFillColor(int i) {
@@ -207,16 +212,21 @@ public class GuiController implements Initializable {
 
     public void gameOver() {
         timeLine.stop();
+        //adding game timer
+        if (gameTimer != null) gameTimer.stop();
         gameOverPanel.setVisible(true);
         isGameOver.setValue(Boolean.TRUE);
     }
 
     public void newGame(ActionEvent actionEvent) {
         timeLine.stop();
+        //additional for game timer conditions
+        if (gameTimer != null) gameTimer.stop();
         gameOverPanel.setVisible(false);
         eventListener.createNewGame();
         gamePanel.requestFocus();
         timeLine.play();
+        if (gameTimer != null) gameTimer.start();
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
     }
