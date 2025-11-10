@@ -48,6 +48,7 @@ public class GuiController implements Initializable {
     private Rectangle[][] rectangles;
 
     private Timeline timeLine;
+    private GameTimer gameTimer;
 
     private final BooleanProperty isPause = new SimpleBooleanProperty();
 
@@ -122,40 +123,16 @@ public class GuiController implements Initializable {
         ));
         timeLine.setCycleCount(Timeline.INDEFINITE);
         timeLine.play();
+
+        //initialize GameTimer method
+        gameTimer = new GameTimer(400, () -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD)));
+        gameTimer.start();
     }
 
+
+    //calling the new method created for the colorMapper instead of switch method
     private Paint getFillColor(int i) {
-        Paint returnPaint;
-        switch (i) {
-            case 0:
-                returnPaint = Color.TRANSPARENT;
-                break;
-            case 1:
-                returnPaint = Color.AQUA;
-                break;
-            case 2:
-                returnPaint = Color.BLUEVIOLET;
-                break;
-            case 3:
-                returnPaint = Color.DARKGREEN;
-                break;
-            case 4:
-                returnPaint = Color.YELLOW;
-                break;
-            case 5:
-                returnPaint = Color.RED;
-                break;
-            case 6:
-                returnPaint = Color.BEIGE;
-                break;
-            case 7:
-                returnPaint = Color.BURLYWOOD;
-                break;
-            default:
-                returnPaint = Color.WHITE;
-                break;
-        }
-        return returnPaint;
+        return ColorMapper.getColor(i);
     }
 
 
@@ -179,10 +156,10 @@ public class GuiController implements Initializable {
         }
     }
 
+
+    //calling the method for rectangle rendering as its own class
     private void setRectangleData(int color, Rectangle rectangle) {
-        rectangle.setFill(getFillColor(color));
-        rectangle.setArcHeight(9);
-        rectangle.setArcWidth(9);
+        RectangleRenderer.styleRectangle(rectangle, color);
     }
 
     private void moveDown(MoveEvent event) {
@@ -207,16 +184,21 @@ public class GuiController implements Initializable {
 
     public void gameOver() {
         timeLine.stop();
+        //adding game timer
+        if (gameTimer != null) gameTimer.stop();
         gameOverPanel.setVisible(true);
         isGameOver.setValue(Boolean.TRUE);
     }
 
     public void newGame(ActionEvent actionEvent) {
         timeLine.stop();
+        //additional for game timer conditions
+        if (gameTimer != null) gameTimer.stop();
         gameOverPanel.setVisible(false);
         eventListener.createNewGame();
         gamePanel.requestFocus();
         timeLine.play();
+        if (gameTimer != null) gameTimer.start();
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
     }
