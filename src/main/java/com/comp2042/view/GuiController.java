@@ -156,10 +156,10 @@ public class GuiController implements Initializable {
         }
     }
 
+
+    //calling the method for rectangle rendering as its own class
     private void setRectangleData(int color, Rectangle rectangle) {
-        rectangle.setFill(getFillColor(color));
-        rectangle.setArcHeight(9);
-        rectangle.setArcWidth(9);
+        RectangleRenderer.styleRectangle(rectangle, color);
     }
 
     private void moveDown(MoveEvent event) {
