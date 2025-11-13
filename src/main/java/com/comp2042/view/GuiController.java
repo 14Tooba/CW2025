@@ -21,6 +21,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+import java.awt.Point; //for Ghost Brick
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -54,6 +55,11 @@ public class GuiController implements Initializable {
 
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
 
+    //adding new fields for ghostBrickCalculator
+    private GridPane ghostBrickPanel;
+    private Rectangle[][] ghostRectangles;
+    private boolean showGhost = true;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
@@ -77,6 +83,17 @@ public class GuiController implements Initializable {
                     }
                     if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
                         moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
+                        keyEvent.consume();
+                    }
+
+                    //adding code for G key, GhostBrickCalculator
+                    if (keyEvent.getCode() == KeyCode.G) {
+                        showGhost = !showGhost;
+                        if (showGhost) {
+                            ghostBrickPanel.setVisible(true);
+                        } else {
+                            ghostBrickPanel.setVisible(false);
+                        }
                         keyEvent.consume();
                     }
                 }
@@ -117,6 +134,27 @@ public class GuiController implements Initializable {
         brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
 
 
+
+        // Initialize ghost brick panel
+        ghostBrickPanel = new GridPane();
+        ghostBrickPanel.setHgap(brickPanel.getHgap());
+        ghostBrickPanel.setVgap(brickPanel.getVgap());
+
+        ghostRectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
+        for (int i = 0; i < brick.getBrickData().length; i++) {
+            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
+                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                rectangle.setFill(javafx.scene.paint.Color.TRANSPARENT);
+                rectangle.setOpacity(0.5);
+                ghostRectangles[i][j] = rectangle;
+                ghostBrickPanel.add(rectangle, j, i);
+            }
+        }
+//adding the ghost rectangles to the scene
+        ((javafx.scene.layout.Pane) gamePanel.getParent()).getChildren().add(ghostBrickPanel);
+
+
+
         timeLine = new Timeline(new KeyFrame(
                 Duration.millis(400),
                 ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
@@ -144,6 +182,29 @@ public class GuiController implements Initializable {
                 for (int j = 0; j < brick.getBrickData()[i].length; j++) {
                     setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
                 }
+            }
+        }
+
+        // Update ghost brick position
+        if (showGhost && brick.getGhostPosition() != null) {
+            Point ghostPos = brick.getGhostPosition();
+            ghostBrickPanel.setLayoutX(gamePanel.getLayoutX() + ghostPos.getX() * brickPanel.getVgap() + ghostPos.getX() * BRICK_SIZE);
+            ghostBrickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + ghostPos.getY() * brickPanel.getHgap() + ghostPos.getY() * BRICK_SIZE);
+
+            for (int i = 0; i < brick.getBrickData().length; i++) {
+                for (int j = 0; j < brick.getBrickData()[i].length; j++) {
+                    if (brick.getBrickData()[i][j] != 0) {
+                        ghostRectangles[i][j].setFill(ColorMapper.getColor(brick.getBrickData()[i][j]));
+                        ghostRectangles[i][j].setOpacity(0.5);
+                    } else {
+                        ghostRectangles[i][j].setFill(javafx.scene.paint.Color.TRANSPARENT);
+                    }
+                }
+            }
+            ghostBrickPanel.setVisible(true);
+        } else {
+            if (ghostBrickPanel != null) {
+                ghostBrickPanel.setVisible(false);
             }
         }
     }

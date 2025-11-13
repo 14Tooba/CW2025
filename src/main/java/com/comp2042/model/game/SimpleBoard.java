@@ -99,9 +99,25 @@ public class SimpleBoard implements Board {
         return currentGameMatrix;
     }
 
+
+
+    //updated the simple board so that it can calculate the ghost position.
     @Override
     public ViewData getViewData() {
-        return new ViewData(brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY(), brickGenerator.getNextBrick().getShapeMatrix().get(0));
+        // Calculate ghost brick position
+        Point ghostPos = GhostBrickCalculator.calculateLandingPosition(
+                currentGameMatrix,
+                brickRotator.getCurrentShape(),
+                currentOffset
+        );
+
+        return new ViewData(
+                brickRotator.getCurrentShape(),
+                (int) currentOffset.getX(),
+                (int) currentOffset.getY(),
+                brickGenerator.getNextBrick().getShapeMatrix().get(0),
+                ghostPos
+        );
     }
 
     @Override
