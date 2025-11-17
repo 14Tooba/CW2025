@@ -22,6 +22,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 import java.awt.Point; //for Ghost Brick
+import com.comp2042.utils.SoundManager; //for SoundManager
+import com.comp2042.view.PauseMenu; //for PauseMenu
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -51,6 +53,12 @@ public class GuiController implements Initializable {
     private Timeline timeLine;
     private GameTimer gameTimer;
 
+    //for SoundManager
+    private SoundManager soundManager;
+
+    //for PauseMenu
+    private PauseMenu pauseMenu;
+
     private final BooleanProperty isPause = new SimpleBooleanProperty();
 
     private final BooleanProperty isGameOver = new SimpleBooleanProperty();
@@ -60,9 +68,22 @@ public class GuiController implements Initializable {
     private Rectangle[][] ghostRectangles;
     private boolean showGhost = true;
 
+
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
+        soundManager = new SoundManager();
+        // Create pause menu
+        pauseMenu = new PauseMenu();
+        pauseMenu.setPrefSize(300, 510);
+        pauseMenu.setLayoutX(0);
+        pauseMenu.setLayoutY(0);
+
+        pauseMenu.getResumeButton().setOnAction(e -> resumeGame());
+        pauseMenu.getQuitButton().setOnAction(e -> {
+            System.exit(0); // Quit the game
+        });
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
         gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -78,7 +99,9 @@ public class GuiController implements Initializable {
                         keyEvent.consume();
                     }
                     if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
-                        refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
+                        ViewData result = eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER));
+                        soundManager.playRotate();
+                        refreshBrick(result);
                         keyEvent.consume();
                     }
                     if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
@@ -99,6 +122,10 @@ public class GuiController implements Initializable {
                 }
                 if (keyEvent.getCode() == KeyCode.N) {
                     newGame(null);
+                }
+                if (keyEvent.getCode() == KeyCode.P || keyEvent.getCode() == KeyCode.ESCAPE) {
+                    togglePause();
+                    keyEvent.consume();
                 }
             }
         });
@@ -161,6 +188,13 @@ public class GuiController implements Initializable {
         ));
         timeLine.setCycleCount(Timeline.INDEFINITE);
         timeLine.play();
+
+        // Add pause menu to scene
+        pauseMenu.setPrefWidth(300);
+        pauseMenu.setPrefHeight(510);
+        pauseMenu.setLayoutX(0);
+        pauseMenu.setLayoutY(0);
+        ((javafx.scene.layout.Pane) gamePanel.getParent()).getChildren().add(pauseMenu);
 
         //initialize GameTimer method
         gameTimer = new GameTimer(400, () -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD)));
@@ -227,6 +261,7 @@ public class GuiController implements Initializable {
         if (isPause.getValue() == Boolean.FALSE) {
             DownData downData = eventListener.onDownEvent(event);
             if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
+                soundManager.playLineClear();
                 NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
                 groupNotification.getChildren().add(notificationPanel);
                 notificationPanel.showScore(groupNotification.getChildren());
@@ -244,6 +279,7 @@ public class GuiController implements Initializable {
     }
 
     public void gameOver() {
+        soundManager.playGameOver();
         timeLine.stop();
         //adding game timer
         if (gameTimer != null) gameTimer.stop();
@@ -263,6 +299,41 @@ public class GuiController implements Initializable {
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
     }
+
+
+
+    /**
+     * Toggles pause state.
+     */
+    private void togglePause() {
+        if (isGameOver.getValue()) {
+            return; // Don't pause if game is over
+        }
+
+        isPause.setValue(!isPause.getValue());
+
+        if (isPause.getValue()) {
+            // Pausing
+            timeLine.pause();
+            if (gameTimer != null) gameTimer.pause();
+            pauseMenu.setVisible(true);
+        } else {
+            // Resuming
+            resumeGame();
+        }
+    }
+
+    /**
+     * Resumes the game from pause.
+     */
+    private void resumeGame() {
+        isPause.setValue(false);
+        pauseMenu.setVisible(false);
+        timeLine.play();
+        if (gameTimer != null) gameTimer.resume();
+        gamePanel.requestFocus();
+    }
+
 
     public void pauseGame(ActionEvent actionEvent) {
         gamePanel.requestFocus();
