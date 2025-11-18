@@ -274,7 +274,7 @@ master
 ## Future Enhancements
 
 Planned features for future development:
-- Multiple game modes (Rising Tide, Speed Challenge, Mission Mode)
+- Multiple game modes (Lava Fall, Speed Challenge, Mission Mode)
 -  High score persistence
 -  Main menu with level selection
 - Additional sound effects and background music
@@ -284,7 +284,6 @@ Planned features for future development:
 
 ---
 
-## Author
 
 **Tooba**  
 GitHub: [@14Tooba](https://github.com/14Tooba)
