@@ -21,7 +21,10 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
-import java.awt.Point; //for Ghost Brick
+import javafx.scene.control.Label;
+
+import java.awt.*;
+
 import com.comp2042.utils.SoundManager; //for SoundManager
 import com.comp2042.view.PauseMenu; //for PauseMenu
 
@@ -43,6 +46,10 @@ public class GuiController implements Initializable {
 
     @FXML
     private GameOverPanel gameOverPanel;
+
+    //for score tracking
+    @FXML
+    private Label scoreLabel;
 
     private Rectangle[][] displayMatrix;
 
@@ -276,6 +283,9 @@ public class GuiController implements Initializable {
     }
 
     public void bindScore(IntegerProperty integerProperty) {
+        if (scoreLabel != null) {
+            scoreLabel.textProperty().bind(integerProperty.asString());
+        }
     }
 
     public void gameOver() {
