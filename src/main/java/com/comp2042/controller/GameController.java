@@ -4,15 +4,26 @@ import com.comp2042.*;
 import com.comp2042.model.game.Board;
 import com.comp2042.model.game.SimpleBoard;
 import com.comp2042.view.GuiController;
+import javafx.stage.Stage; //added for menu screen
+
+
 
 public class GameController implements InputEventListener {
 
     private Board board = new SimpleBoard(25, 10);
 
+
+    private final Stage stage;
+    private final MenuController menuController;
+
     private final GuiController viewGuiController;
 
-    public GameController(GuiController c) {
+
+    public GameController(GuiController c, Stage stage, MenuController menuController) {
+        this.stage = stage;
+        this.menuController = menuController;
         viewGuiController = c;
+
         board.createNewBrick();
         viewGuiController.setEventListener(this);
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());

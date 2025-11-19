@@ -27,6 +27,10 @@ import java.awt.*;
 
 import com.comp2042.utils.SoundManager; //for SoundManager
 import com.comp2042.view.PauseMenu; //for PauseMenu
+import javafx.stage.Stage;
+import com.comp2042.controller.MenuController;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -74,6 +78,10 @@ public class GuiController implements Initializable {
     private GridPane ghostBrickPanel;
     private Rectangle[][] ghostRectangles;
     private boolean showGhost = true;
+
+    //added for menu screen
+    private Stage stage;
+    private MenuController menuController;
 
 
 
@@ -143,6 +151,14 @@ public class GuiController implements Initializable {
         reflection.setTopOpacity(0.9);
         reflection.setTopOffset(-12);
     }
+
+
+    //menu
+    public void setStageAndMenu(Stage stage, MenuController menuController) {
+        this.stage = stage;
+        this.menuController = menuController;
+    }
+
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
@@ -288,13 +304,18 @@ public class GuiController implements Initializable {
         }
     }
 
+
     public void gameOver() {
         soundManager.playGameOver();
         timeLine.stop();
-        //adding game timer
         if (gameTimer != null) gameTimer.stop();
         gameOverPanel.setVisible(true);
         isGameOver.setValue(Boolean.TRUE);
+
+        // Return to menu after 3 seconds
+        PauseTransition pause = new PauseTransition(Duration.seconds(3));
+        pause.setOnFinished(e -> returnToMenu());
+        pause.play();
     }
 
     public void newGame(ActionEvent actionEvent) {
@@ -347,5 +368,12 @@ public class GuiController implements Initializable {
 
     public void pauseGame(ActionEvent actionEvent) {
         gamePanel.requestFocus();
+    }
+
+//returning the main menu after game is over.
+    private void returnToMenu() {
+        if (stage != null && menuController != null) {
+            stage.setScene(menuController.getMenuScene());
+        }
     }
 }
