@@ -276,7 +276,6 @@ master
 Planned features for future development:
 - Multiple game modes (Lava Fall, Speed Challenge, Mission Mode)
 -  High score persistence
--  Main menu with level selection
 - Additional sound effects and background music
 -  Customizable themes and skins
 -  Multiplayer support
