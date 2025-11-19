@@ -107,7 +107,7 @@ src/
 
 2. **Build with Maven**
    ```bash
-   mvn clean help install
+   mvn clean help run
    ```
 
 3. **Run the game**
