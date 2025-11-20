@@ -21,6 +21,9 @@ public class SimpleBoard implements Board {
     private int[][] currentGameMatrix;
     private Point currentOffset;
     private final Score score;
+    private final LavaManager lavaManager;
+    private GameLevel currentLevel = GameLevel.CLASSIC;
+    private int levelLinesCleared = 0;
 
     public SimpleBoard(int width, int height) {
         this.width = width;
@@ -29,6 +32,7 @@ public class SimpleBoard implements Board {
         brickGenerator = new RandomBrickGenerator();
         brickRotator = new BrickRotator();
         score = new Score();
+        this.lavaManager = new LavaManager(); //initialize for new level
     }
 
     @Override
@@ -137,12 +141,29 @@ public class SimpleBoard implements Board {
         currentGameMatrix = MatrixOperations.merge(currentGameMatrix, brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
     }
 
+
+
+    //updated for the new lava level
     @Override
     public ClearRow clearRows() {
         ClearRow clearRow = MatrixOperations.checkRemoving(currentGameMatrix);
         currentGameMatrix = clearRow.getNewMatrix();
-        return clearRow;
 
+        if (clearRow.getLinesRemoved() > 0) {
+            levelLinesCleared += clearRow.getLinesRemoved();
+
+            // Record line clear in lava mode
+            if (lavaManager.isActive()) {
+                lavaManager.recordLineClear();
+            }
+        }
+
+        // Update lava position if active
+        if (lavaManager.isActive()) {
+            lavaManager.update();
+        }
+
+        return clearRow;
     }
 
     @Override
@@ -155,6 +176,9 @@ public class SimpleBoard implements Board {
     public void newGame() {
         currentGameMatrix = new int[width][height];
         score.reset();
+        currentLevel = GameLevel.CLASSIC;  // update for lava game
+        levelLinesCleared = 0;             // update for lava game
+        lavaManager.reset();               // update for lava game
         createNewBrick();
     }
 
@@ -174,5 +198,62 @@ public class SimpleBoard implements Board {
             }
         }
         return false;
+    }
+
+
+
+
+    /**
+     * Gets current game level.
+     *
+     * @return Current level
+     */
+    public GameLevel getCurrentLevel() {
+        return currentLevel;
+    }
+
+    /**
+     * Gets lava manager instance.
+     *
+     * @return LavaManager
+     */
+    public LavaManager getLavaManager() {
+        return lavaManager;
+    }
+
+    /**
+     * Checks if player should advance to next level.
+     *
+     * @return true if ready to level up
+     */
+    public boolean shouldLevelUp() {
+        return levelLinesCleared >= currentLevel.getLinesRequiredToAdvance();
+    }
+
+    /**
+     * Advances to the next level and resets board.
+     */
+    public void advanceToNextLevel() {
+        currentLevel = currentLevel.getNextLevel();
+        levelLinesCleared = 0;
+
+        // Clear the board
+        currentGameMatrix = new int[width][height];
+
+        // Activate lava if entering lava survival mode
+        if (currentLevel == GameLevel.LAVA_SURVIVAL) {
+            lavaManager.activate();
+        } else {
+            lavaManager.deactivate();
+        }
+    }
+
+    /**
+     * Checks if lava has collided with blocks (game over condition).
+     *
+     * @return true if lava touched blocks
+     */
+    public boolean checkLavaGameOver() {
+        return lavaManager.isActive() && lavaManager.checkLavaCollision(currentGameMatrix);
     }
 }

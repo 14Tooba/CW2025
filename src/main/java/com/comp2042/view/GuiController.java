@@ -1,6 +1,7 @@
 package com.comp2042.view;
 
 import com.comp2042.*;
+import com.comp2042.controller.GameController;
 import com.comp2042.controller.InputEventListener;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -32,6 +33,9 @@ import com.comp2042.controller.MenuController;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 import javafx.scene.control.Label; //for score display
+import com.comp2042.model.game.LavaManager;
+import com.comp2042.model.game.SimpleBoard;
+import javafx.scene.paint.Color;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -84,6 +88,8 @@ public class GuiController implements Initializable {
     private Stage stage;
     private MenuController menuController;
 
+    private LevelUpNotification levelUpNotification;
+
 
 
     @Override
@@ -100,6 +106,13 @@ public class GuiController implements Initializable {
         pauseMenu.getQuitButton().setOnAction(e -> {
             System.exit(0); // Quit the game
         });
+        // Create level up notification
+        levelUpNotification = new LevelUpNotification("Next Level");
+        levelUpNotification.setPrefSize(300, 510);
+        levelUpNotification.setLayoutX(0);
+        levelUpNotification.setLayoutY(0);
+
+
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
         gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -220,6 +233,9 @@ public class GuiController implements Initializable {
         pauseMenu.setLayoutY(0);
         ((javafx.scene.layout.Pane) gamePanel.getParent()).getChildren().add(pauseMenu);
 
+        // Add level up notification to scene
+        ((javafx.scene.layout.Pane) gamePanel.getParent()).getChildren().add(levelUpNotification);
+
         //initialize GameTimer method
         gameTimer = new GameTimer(400, () -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD)));
         gameTimer.start();
@@ -267,13 +283,34 @@ public class GuiController implements Initializable {
         }
     }
 
+
     public void refreshGameBackground(int[][] board) {
         for (int i = 2; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
                 setRectangleData(board[i][j], displayMatrix[i][j]);
             }
         }
+
+        // Render lava if active -pass lava info separately
     }
+
+    /**
+     * Updates lava rendering on the board.
+     *
+     * @param lavaRow Current lava row position, -1 if inactive
+     */
+    public void updateLavaDisplay(int lavaRow) {
+        if (lavaRow >= 2 && lavaRow < displayMatrix.length) {
+            // Render lava row as orange-red
+            for (int j = 0; j < displayMatrix[lavaRow].length; j++) {
+                displayMatrix[lavaRow][j].setFill(Color.rgb(255, 69, 0, 0.9));
+                displayMatrix[lavaRow][j].setArcHeight(9);
+                displayMatrix[lavaRow][j].setArcWidth(9);
+            }
+        }
+    }
+
+
 
 
     //calling the method for rectangle rendering as its own class
@@ -332,6 +369,32 @@ public class GuiController implements Initializable {
         if (gameTimer != null) gameTimer.start();
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
+    }
+
+    /**
+     * Shows level up notification and clears board.
+     *
+     * @param levelName Name of the next level
+     */
+    public void showLevelUp(String levelName) {
+        // Update notification with level name
+        levelUpNotification = new LevelUpNotification(levelName);
+        levelUpNotification.setPrefSize(300, 510);
+        levelUpNotification.setVisible(true);
+
+        // Add to scene if not already added
+        javafx.scene.layout.Pane parent = (javafx.scene.layout.Pane) gamePanel.getParent();
+        if (!parent.getChildren().contains(levelUpNotification)) {
+            parent.getChildren().add(levelUpNotification);
+        }
+
+        // Hide after 2 seconds
+        PauseTransition pause = new PauseTransition(Duration.seconds(2));
+        pause.setOnFinished(e -> {
+            levelUpNotification.setVisible(false);
+            gamePanel.requestFocus();
+        });
+        pause.play();
     }
 
 
