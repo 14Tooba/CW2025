@@ -3,6 +3,7 @@ package com.comp2042.model.game;
 import com.comp2042.ClearRow;
 import com.comp2042.NextShapeInfo;
 import com.comp2042.ViewData;
+import com.comp2042.constants.GameConstants;
 import com.comp2042.logic.bricks.Brick;
 import com.comp2042.logic.bricks.BrickGenerator;
 import com.comp2042.logic.bricks.RandomBrickGenerator;
@@ -86,12 +87,23 @@ public class SimpleBoard implements Board {
         }
     }
 
+    //Updated so that the spawn position of the bricks is now at the top
     @Override
     public boolean createNewBrick() {
         Brick currentBrick = brickGenerator.getBrick();
         brickRotator.setBrick(currentBrick);
-        currentOffset = new Point(4, 10);
-        return MatrixOperations.intersect(currentGameMatrix, brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
+        currentOffset = new Point(
+                GameConstants.BRICK_SPAWN_X,
+                GameConstants.BRICK_SPAWN_Y
+        );
+
+        // Return true if spawn position is blocked (game over condition)
+        return MatrixOperations.intersect(
+                currentGameMatrix,
+                brickRotator.getCurrentShape(),
+                (int) currentOffset.getX(),
+                (int) currentOffset.getY()
+        );
     }
 
     @Override
@@ -144,5 +156,23 @@ public class SimpleBoard implements Board {
         currentGameMatrix = new int[width][height];
         score.reset();
         createNewBrick();
+    }
+
+
+
+    /**
+     * Checks if any blocks exist in the spawn area (top 2 hidden rows).
+     * This indicates game over.
+     */
+    public boolean isGameOverCondition() {
+        // Check rows 0 and 1 (spawn area)
+        for (int row = 0; row < 2; row++) {
+            for (int col = 0; col < currentGameMatrix[row].length; col++) {
+                if (currentGameMatrix[row][col] != 0) {
+                    return true; // Block in spawn area = game over
+                }
+            }
+        }
+        return false;
     }
 }
