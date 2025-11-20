@@ -28,6 +28,7 @@ import javafx.stage.Stage;
 import com.comp2042.controller.MenuController;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
+import javafx.scene.control.Label; //for score display
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -47,6 +48,9 @@ public class GuiController implements Initializable {
 
     @FXML
     private GameOverPanel gameOverPanel;
+
+    @FXML
+    private Label scoreLabel;
 
     private Rectangle[][] displayMatrix;
 
@@ -291,7 +295,12 @@ public class GuiController implements Initializable {
         this.eventListener = eventListener;
     }
 
+
+    //updated for displaying the score while playing the game.
     public void bindScore(IntegerProperty integerProperty) {
+        if (scoreLabel != null) {
+            scoreLabel.textProperty().bind(integerProperty.asString());
+        }
     }
 
 
