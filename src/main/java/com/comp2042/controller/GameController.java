@@ -4,6 +4,7 @@ import com.comp2042.*;
 import com.comp2042.model.game.Board;
 import com.comp2042.model.game.SimpleBoard;
 import com.comp2042.view.GuiController;
+import com.comp2042.view.LevelUpNotification;
 import javafx.stage.Stage; //added for menu screen
 
 
@@ -17,6 +18,8 @@ public class GameController implements InputEventListener {
     private final MenuController menuController;
 
     private final GuiController viewGuiController;
+
+    private LevelUpNotification levelUpNotification;
 
 
     public GameController(GuiController c, Stage stage, MenuController menuController) {
@@ -32,28 +35,47 @@ public class GameController implements InputEventListener {
 
 
         //Edited the onDownEvent
-    @Override
-    public DownData onDownEvent(MoveEvent event) {
-        boolean canMove = board.moveBrickDown();
-        ClearRow clearRow = null;
-        if (!canMove) {
-            board.mergeBrickToBackground();
+        @Override
+        public DownData onDownEvent(MoveEvent event) {
+            boolean canMove = board.moveBrickDown();
+            ClearRow clearRow = null;
 
-            // Check game over AFTER merging
-            if (((SimpleBoard)board).isGameOverCondition()) {
-                viewGuiController.gameOver();
-                return new DownData(clearRow, board.getViewData());
+            if (!canMove) {
+                board.mergeBrickToBackground();
+
+                // Check lava collision (game over in lava mode)
+                if (board.checkLavaGameOver()) {
+                    viewGuiController.gameOver();
+                    return new DownData(clearRow, board.getViewData());
+                }
+
+                clearRow = board.clearRows();
+                if (clearRow.getLinesRemoved() > 0) {
+                    board.getScore().add(clearRow.getScoreBonus());
+                }
+
+                // Check if should level up
+                if (board.shouldLevelUp()) {
+                    viewGuiController.showLevelUp(board.getCurrentLevel().getNextLevel().getDisplayName());
+                    board.advanceToNextLevel();
+                }
+
+                if (board.createNewBrick()) {
+                    viewGuiController.gameOver();
+                }
+
+                viewGuiController.refreshGameBackground(board.getBoardMatrix());
+
+                if (board.getLavaManager().isActive()) {
+                    viewGuiController.updateLavaDisplay(board.getLavaManager().getLavaRow());
+                }
             }
 
-            clearRow = board.clearRows();
-            if (clearRow.getLinesRemoved() > 0) {
-                board.getScore().add(clearRow.getScoreBonus());
-            }
-
-            board.createNewBrick();
-            viewGuiController.refreshGameBackground(board.getBoardMatrix());
+            return new DownData(clearRow, board.getViewData());
         }
-        return new DownData(clearRow, board.getViewData());
+
+    public Board getBoard() {
+        return board;
     }
 
     @Override
