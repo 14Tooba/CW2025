@@ -15,6 +15,7 @@ public class LavaManager {
     private long lastLavaMoveTime;
     private static final long LAVA_MOVE_INTERVAL_MS = 4000; // Lava moves every 4 seconds
     private int linesCleared = 0; // Track lines cleared in lava mode
+    private static final int LAVA_THICKNESS = 3; //lava thickness
 
     /**
      * Activates lava mode.
@@ -50,17 +51,39 @@ public class LavaManager {
      * @return true if lava touched a block (game over), false otherwise
      */
     public boolean checkLavaCollision(int[][] boardMatrix) {
-        if (!active || lavaRow < 0 || lavaRow >= boardMatrix.length) {
+        if (!active || lavaRow < 0) {
             return false;
         }
 
-        // Check if current lava row has any non-empty cells
-        for (int col = 0; col < boardMatrix[lavaRow].length; col++) {
-            if (boardMatrix[lavaRow][col] != GameConstants.COLOR_EMPTY) {
-                return true; // Lava hit a block!
+        // Check all lava rows (thickness)
+        for (int row = lavaRow; row < lavaRow + LAVA_THICKNESS && row < boardMatrix.length; row++) {
+            for (int col = 0; col < boardMatrix[row].length; col++) {
+                if (boardMatrix[row][col] != GameConstants.COLOR_EMPTY) {
+                    return true; // Lava hit a block!
+                }
             }
         }
         return false;
+    }
+
+
+    /**
+     * Gets all rows currently occupied by lava.
+     * Lava spans multiple rows (thickness).
+     *
+     * @return Array of row indices covered by lava
+     */
+    public int[] getLavaRows() {
+        if (!active || lavaRow < 0) {
+            return new int[0];
+        }
+
+        // Return array of rows from lavaRow to lavaRow + thickness
+        int[] rows = new int[LAVA_THICKNESS];
+        for (int i = 0; i < LAVA_THICKNESS; i++) {
+            rows[i] = lavaRow + i;
+        }
+        return rows;
     }
 
     /**

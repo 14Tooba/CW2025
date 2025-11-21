@@ -294,18 +294,33 @@ public class GuiController implements Initializable {
         // Render lava if active -pass lava info separately
     }
 
+
     /**
      * Updates lava rendering on the board.
      *
-     * @param lavaRow Current lava row position, -1 if inactive
+     * @param lavaRows Array of rows occupied by lava
      */
-    public void updateLavaDisplay(int lavaRow) {
-        if (lavaRow >= 2 && lavaRow < displayMatrix.length) {
-            // Render lava row as orange-red
-            for (int j = 0; j < displayMatrix[lavaRow].length; j++) {
-                displayMatrix[lavaRow][j].setFill(Color.rgb(255, 69, 0, 0.9));
-                displayMatrix[lavaRow][j].setArcHeight(9);
-                displayMatrix[lavaRow][j].setArcWidth(9);
+    public void updateLavaDisplay(int[] lavaRows) {
+        // First, clear any previous lava rendering from all rows
+        for (int i = 2; i < displayMatrix.length; i++) {
+            for (int j = 0; j < displayMatrix[i].length; j++) {
+                // Only clear if it's empty (not a placed block)
+                if (displayMatrix[i][j].getFill() == Color.rgb(255, 69, 0) ||
+                        displayMatrix[i][j].getFill() == Color.rgb(255, 140, 0)) {
+                    displayMatrix[i][j].setFill(Color.TRANSPARENT);
+                }
+            }
+        }
+
+        // Render all lava rows in bright orange
+        for (int lavaRow : lavaRows) {
+            if (lavaRow >= 2 && lavaRow < displayMatrix.length) {
+                for (int j = 0; j < displayMatrix[lavaRow].length; j++) {
+                    // Bright orange lava
+                    displayMatrix[lavaRow][j].setFill(Color.rgb(255, 69, 0)); // Bright orange-red
+                    displayMatrix[lavaRow][j].setArcHeight(9);
+                    displayMatrix[lavaRow][j].setArcWidth(9);
+                }
             }
         }
     }
@@ -370,33 +385,46 @@ public class GuiController implements Initializable {
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
     }
-
     /**
-     * Shows level up notification and clears board.
+     * Shows level up notification with level name.
+     * Pauses game briefly to show notification.
      *
      * @param levelName Name of the next level
      */
     public void showLevelUp(String levelName) {
-        // Update notification with level name
-        levelUpNotification = new LevelUpNotification(levelName);
-        levelUpNotification.setPrefSize(300, 510);
-        levelUpNotification.setVisible(true);
+        System.out.println("SHOWING LEVEL UP: " + levelName);
 
-        // Add to scene if not already added
+        // Get parent pane
         javafx.scene.layout.Pane parent = (javafx.scene.layout.Pane) gamePanel.getParent();
-        if (!parent.getChildren().contains(levelUpNotification)) {
-            parent.getChildren().add(levelUpNotification);
+
+        // Remove old notification if it exists
+        if (levelUpNotification != null) {
+            parent.getChildren().remove(levelUpNotification);
         }
 
-        // Hide after 2 seconds
-        PauseTransition pause = new PauseTransition(Duration.seconds(2));
+        // Create notification
+        levelUpNotification = new LevelUpNotification(levelName);
+        levelUpNotification.setPrefWidth(300);
+        levelUpNotification.setPrefHeight(510);
+
+        // Add to parent and bring to absolute front
+        parent.getChildren().add(levelUpNotification);
+        levelUpNotification.toFront();
+
+        // Pause the game
+        timeLine.pause();
+        if (gameTimer != null) gameTimer.pause();
+
+        // Show for 3 seconds then hide and resume
+        PauseTransition pause = new PauseTransition(Duration.seconds(3));
         pause.setOnFinished(e -> {
-            levelUpNotification.setVisible(false);
+            parent.getChildren().remove(levelUpNotification);
+            timeLine.play();
+            if (gameTimer != null) gameTimer.start();
             gamePanel.requestFocus();
         });
         pause.play();
     }
-
 
 
     /**

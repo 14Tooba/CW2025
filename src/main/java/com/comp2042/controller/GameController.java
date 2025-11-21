@@ -66,8 +66,9 @@ public class GameController implements InputEventListener {
 
                 viewGuiController.refreshGameBackground(board.getBoardMatrix());
 
+                // Update lava display if active
                 if (board.getLavaManager().isActive()) {
-                    viewGuiController.updateLavaDisplay(board.getLavaManager().getLavaRow());
+                    viewGuiController.updateLavaDisplay(board.getLavaManager().getLavaRows());
                 }
             }
 
