@@ -246,6 +246,8 @@ public class SimpleBoard implements Board {
         } else {
             lavaManager.deactivate();
         }
+        // Create new brick for the new level
+        createNewBrick();
     }
 
     /**

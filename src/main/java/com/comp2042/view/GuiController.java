@@ -86,6 +86,9 @@ public class GuiController implements Initializable {
 
     private LevelUpNotification levelUpNotification;
 
+    //for the background in Lava level
+    private boolean isLavaMode = false;
+
 
 
     @Override
@@ -321,6 +324,23 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Sets the background color for lava mode.
+     *
+     * @param lavaActive true if lava mode is active
+     */
+    public void setLavaBackground(boolean lavaActive) {
+        this.isLavaMode = lavaActive;
+
+        if (lavaActive) {
+            // Subtle dark red tint - still visible but themed
+            gamePanel.setStyle("-fx-background-color: rgba(40, 10, 10, 0.6);");
+        } else {
+            // Normal background for classic mode
+            gamePanel.setStyle("-fx-background-color: transparent;");
+        }
+    }
+
 
 
 
@@ -381,46 +401,51 @@ public class GuiController implements Initializable {
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
     }
+
+
     /**
-     * Shows level up notification with level name.
-     * Pauses game briefly to show notification.
+     * Shows blue "LEVEL UP" screen for 3 seconds.
+     * Pauses game, displays notification, then resumes.
      *
-     * @param levelName Name of the next level
+     * @param levelName Name of next level
      */
     public void showLevelUp(String levelName) {
-        System.out.println("SHOWING LEVEL UP: " + levelName);
 
-        // Get parent pane
-        javafx.scene.layout.Pane parent = (javafx.scene.layout.Pane) gamePanel.getParent();
-
-        // Remove old notification if it exists
-        if (levelUpNotification != null) {
-            parent.getChildren().remove(levelUpNotification);
-        }
-
-        // Create notification
-        levelUpNotification = new LevelUpNotification(levelName);
-        levelUpNotification.setPrefWidth(300);
-        levelUpNotification.setPrefHeight(510);
-
-        // Add to parent and bring to absolute front
-        parent.getChildren().add(levelUpNotification);
-        levelUpNotification.toFront();
-
-        // Pause the game
+        // Pause game immediately
         timeLine.pause();
         if (gameTimer != null) gameTimer.pause();
 
-        // Show for 3 seconds then hide and resume
-        PauseTransition pause = new PauseTransition(Duration.seconds(3));
+        // Create notification with EXACT size
+        LevelUpNotification notification = new LevelUpNotification(levelName);
+        notification.setPrefSize(300, 510);
+        notification.setMinSize(300, 510);
+        notification.setMaxSize(300, 510);
+        notification.setLayoutX(0);
+        notification.setLayoutY(0);
+
+        // Get the ROOT pane
+        javafx.scene.layout.Pane root = (javafx.scene.layout.Pane) gamePanel.getScene().getRoot();
+
+        // Add on top of EVERYTHING
+        root.getChildren().add(notification);
+        notification.toFront();
+
+
+        // Wait 3 seconds
+        PauseTransition pause = new PauseTransition(Duration.seconds(5));
         pause.setOnFinished(e -> {
-            parent.getChildren().remove(levelUpNotification);
+            System.out.println("Removing notification and resuming");
+            root.getChildren().remove(notification);
+            // Set background based on level name
+            boolean isLava = levelName.toUpperCase().contains("LAVA");
+            setLavaBackground(isLava);
             timeLine.play();
             if (gameTimer != null) gameTimer.start();
             gamePanel.requestFocus();
         });
         pause.play();
     }
+
 
 
     /**
