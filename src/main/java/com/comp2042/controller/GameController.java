@@ -54,7 +54,7 @@ public class GameController implements InputEventListener {
                     board.getScore().add(clearRow.getScoreBonus());
                 }
 
-                // Check if should level up
+                // Check if it should level up
                 if (board.shouldLevelUp()) {
                     viewGuiController.showLevelUp(board.getCurrentLevel().getNextLevel().getDisplayName());
                     board.advanceToNextLevel();

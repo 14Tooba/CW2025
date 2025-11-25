@@ -39,15 +39,10 @@ public enum GameLevel {
         };
     }
 
-    /**
-     * Gets display name for the level.
-     *
-     * @return Level name
-     */
     public String getDisplayName() {
         return switch (this) {
-            case CLASSIC -> "Classic Mode";
-            case LAVA_SURVIVAL -> "Lava Survival";
+            case CLASSIC -> "CLASSIC MODE";
+            case LAVA_SURVIVAL -> "LAVA MODE";
         };
     }
 }

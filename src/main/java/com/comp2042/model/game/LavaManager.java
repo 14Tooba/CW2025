@@ -69,7 +69,7 @@ public class LavaManager {
 
     /**
      * Gets all rows currently occupied by lava.
-     * Lava spans multiple rows (thickness).
+     * Lava fills from top (row 0) down to current lava row.
      *
      * @return Array of row indices covered by lava
      */
@@ -78,13 +78,14 @@ public class LavaManager {
             return new int[0];
         }
 
-        // Return array of rows from lavaRow to lavaRow + thickness
-        int[] rows = new int[LAVA_THICKNESS];
-        for (int i = 0; i < LAVA_THICKNESS; i++) {
-            rows[i] = lavaRow + i;
+        // Return all rows from 0 to lavaRow (continuous lava from top)
+        int[] rows = new int[lavaRow + LAVA_THICKNESS];
+        for (int i = 0; i < rows.length && i < 25; i++) {
+            rows[i] = i;
         }
         return rows;
     }
+
 
     /**
      * Records that a line was cleared in lava mode.
