@@ -9,6 +9,8 @@ import com.comp2042.logic.bricks.BrickGenerator;
 import com.comp2042.logic.bricks.RandomBrickGenerator;
 import com.comp2042.model.scoring.Score;
 import com.comp2042.utils.MatrixOperations;
+import java.util.HashSet;
+import java.util.Set;
 
 import java.awt.*;
 
@@ -24,6 +26,7 @@ public class SimpleBoard implements Board {
     private final LavaManager lavaManager;
     private GameLevel currentLevel = GameLevel.CLASSIC;
     private int levelLinesCleared = 0;
+    private final TargetChallengeManager targetChallengeManager;
 
     public SimpleBoard(int width, int height) {
         this.width = width;
@@ -32,7 +35,8 @@ public class SimpleBoard implements Board {
         brickGenerator = new RandomBrickGenerator();
         brickRotator = new BrickRotator();
         score = new Score();
-        this.lavaManager = new LavaManager(); //initialize for new level
+        this.lavaManager = new LavaManager();
+        this.targetChallengeManager = new TargetChallengeManager(); //initialize for target challenge//initialize for new level
     }
 
     @Override
@@ -155,6 +159,13 @@ public class SimpleBoard implements Board {
             // Record line clear in lava mode
             if (lavaManager.isActive()) {
                 lavaManager.recordLineClear();
+                // Update target blocks if in target challenge mode
+                if (targetChallengeManager.isActive()) {
+                    Set<Point> clearedPositions = new HashSet<>();
+                    // Add logic to track which positions were cleared
+                    // This would need to be extracted from the clearRow operation
+                    targetChallengeManager.updateTargetBlocks(clearedPositions);
+                }
             }
         }
 
@@ -227,6 +238,9 @@ public class SimpleBoard implements Board {
      * @return true if ready to level up
      */
     public boolean shouldLevelUp() {
+        if (currentLevel == GameLevel.TARGET_CHALLENGE) {
+            return targetChallengeManager.isMissionComplete();
+        }
         return levelLinesCleared >= currentLevel.getLinesRequiredToAdvance();
     }
 
@@ -240,12 +254,18 @@ public class SimpleBoard implements Board {
         // Clear the board
         currentGameMatrix = new int[width][height];
 
-        // Activate lava if entering lava survival mode
+        // Deactivate previous level features
+        lavaManager.deactivate();
+        targetChallengeManager.deactivate();
+
+        // Activate features for new level
         if (currentLevel == GameLevel.LAVA_SURVIVAL) {
             lavaManager.activate();
-        } else {
-            lavaManager.deactivate();
+        } else if (currentLevel == GameLevel.TARGET_CHALLENGE) {
+            targetChallengeManager.activate();
+            targetChallengeManager.generatePattern(currentGameMatrix, width, height);
         }
+
         // Create new brick for the new level
         createNewBrick();
     }
@@ -257,5 +277,24 @@ public class SimpleBoard implements Board {
      */
     public boolean checkLavaGameOver() {
         return lavaManager.isActive() && lavaManager.checkLavaCollision(currentGameMatrix);
+    }
+
+
+    /**
+     * Gets the TargetChallengeManager instance.
+     *
+     * @return TargetChallengeManager
+     */
+    public TargetChallengeManager getTargetChallengeManager() {
+        return targetChallengeManager;
+    }
+
+    /**
+     * Checks if target challenge timer has expired.
+     *
+     * @return true if time is up
+     */
+    public boolean checkTargetChallengeTimeout() {
+        return targetChallengeManager.isActive() && targetChallengeManager.updateTimer();
     }
 }

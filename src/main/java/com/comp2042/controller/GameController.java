@@ -6,6 +6,7 @@ import com.comp2042.model.game.SimpleBoard;
 import com.comp2042.view.GuiController;
 import com.comp2042.view.LevelUpNotification;
 import javafx.stage.Stage; //added for menu screen
+import com.comp2042.model.game.TargetChallengeManager;
 
 
 
@@ -40,6 +41,12 @@ public class GameController implements InputEventListener {
             boolean canMove = board.moveBrickDown();
             ClearRow clearRow = null;
 
+            // Check target challenge timeout
+            if (board.checkTargetChallengeTimeout()) {
+                viewGuiController.gameOver();
+                return new DownData(clearRow, board.getViewData());
+            }
+
             if (!canMove) {
                 board.mergeBrickToBackground();
 
@@ -70,6 +77,16 @@ public class GameController implements InputEventListener {
                 if (board.getLavaManager().isActive()) {
                     viewGuiController.updateLavaDisplay(board.getLavaManager().getLavaRows());
                 }
+
+                // Update target challenge display if active
+                if (board.getTargetChallengeManager().isActive()) {
+                    viewGuiController.updateTargetChallengeDisplay(
+                            board.getTargetChallengeManager().getRemainingTargetBlocks(),
+                            board.getTargetChallengeManager().getFormattedTime(),
+                            board.getTargetChallengeManager().getCurrentMission()
+                    );
+                }
+
             }
 
             return new DownData(clearRow, board.getViewData());

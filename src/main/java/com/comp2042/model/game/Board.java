@@ -35,4 +35,16 @@ public interface Board {
     boolean shouldLevelUp();
     void advanceToNextLevel();
     boolean checkLavaGameOver();
+
+    /**
+     * Gets the TargetChallengeManager instance.
+     * @return TargetChallengeManager
+     */
+    TargetChallengeManager getTargetChallengeManager();
+
+    /**
+     * Checks if target challenge timer has expired.
+     * @return true if time is up
+     */
+    boolean checkTargetChallengeTimeout();
 }

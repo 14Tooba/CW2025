@@ -17,6 +17,7 @@ import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -92,6 +93,17 @@ public class GuiController implements Initializable {
 
     //for the background in Lava level
     private boolean isLavaMode = false;
+
+    //for Target Challenge UI
+    @FXML
+    private VBox targetChallengeContainer;
+    @FXML
+    private Label missionLabel;
+    @FXML
+    private Label targetBlocksLabel;
+    @FXML
+    private Label timerLabel;
+    private boolean isTargetChallengeMode = false;
 
 
 
@@ -345,6 +357,44 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Updates the Target Challenge UI display.
+     *
+     * @param remainingBlocks Number of target blocks remaining
+     * @param formattedTime Time remaining in MM:SS format
+     * @param mission Current mission type
+     */
+    public void updateTargetChallengeDisplay(int remainingBlocks, String formattedTime,
+                                             com.comp2042.model.game.TargetChallengeManager.MissionType mission) {
+        isTargetChallengeMode = true;
+
+        // Show Target Challenge UI container
+        if (targetChallengeContainer != null) {
+            targetChallengeContainer.setVisible(true);
+            targetChallengeContainer.setManaged(true);
+        }
+
+        if (targetBlocksLabel != null) {
+            targetBlocksLabel.setText("Blocks: " + remainingBlocks);
+        }
+        if (timerLabel != null) {
+            timerLabel.setText("Time: " + formattedTime);
+        }
+        if (missionLabel != null && mission != null) {
+            missionLabel.setText(mission.getName());
+        }
+    }
+
+    /**
+     * Hides the Target Challenge UI when not in Target Challenge mode.
+     */
+    public void hideTargetChallengeUI() {
+        isTargetChallengeMode = false;
+        if (targetChallengeContainer != null) {
+            targetChallengeContainer.setVisible(false);
+            targetChallengeContainer.setManaged(false);
+        }
+    }
 
 
 

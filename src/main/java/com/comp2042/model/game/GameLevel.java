@@ -13,7 +13,12 @@ public enum GameLevel {
     /**
      * Lava Survival mode - lava descends from top, must clear 2 lines.
      */
-    LAVA_SURVIVAL;
+    LAVA_SURVIVAL,
+
+    /**
+     * Target Challenge mode - clear pre-filled block patterns within 3 minutes.
+     */
+    TARGET_CHALLENGE;
 
     /**
      * Gets the next level after completing current one.
@@ -23,7 +28,8 @@ public enum GameLevel {
     public GameLevel getNextLevel() {
         return switch (this) {
             case CLASSIC -> LAVA_SURVIVAL;
-            case LAVA_SURVIVAL -> CLASSIC;
+            case LAVA_SURVIVAL -> TARGET_CHALLENGE;
+            case TARGET_CHALLENGE -> CLASSIC;
         };
     }
 
@@ -36,6 +42,7 @@ public enum GameLevel {
         return switch (this) {
             case CLASSIC -> 1;
             case LAVA_SURVIVAL -> 2;
+            case TARGET_CHALLENGE -> 0; // Special win condition - clear all target blocks
         };
     }
 
@@ -43,6 +50,7 @@ public enum GameLevel {
         return switch (this) {
             case CLASSIC -> "CLASSIC MODE";
             case LAVA_SURVIVAL -> "LAVA MODE";
+            case TARGET_CHALLENGE -> "TARGET CHALLENGE";
         };
     }
 }

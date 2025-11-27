@@ -18,11 +18,14 @@ public class LevelUpNotification extends StackPane {
         setMinSize(300, 510);
         setMaxSize(300, 510);
 
-        // Check if it's lava mode for special styling
+        // Check if it's lava mode or target challenge for special styling
         boolean isLavaMode = levelName.toUpperCase().contains("LAVA");
+        boolean isTargetChallenge = levelName.toUpperCase().contains("TARGET");
 
         if (isLavaMode) {
             createLavaNotification();
+        } else if (isTargetChallenge) {
+            createTargetChallengeNotification();
         } else {
             createClassicNotification();
         }
@@ -112,6 +115,104 @@ public class LevelUpNotification extends StackPane {
                 challengeLabel,
                 objectiveLabel,
                 bottomWarning
+        );
+
+        getChildren().add(container);
+    }
+
+    /**
+     * Creates notification for Target Challenge mode.
+     */
+    private void createTargetChallengeNotification() {
+        // Purple gradient background
+        setStyle("-fx-background-color: linear-gradient(to bottom, #2D0A4B, #4A148C, #2D0A4B);");
+
+        VBox container = new VBox(15);
+        container.setAlignment(Pos.CENTER);
+
+        // "LEVEL UP!" with target icon
+        Label levelUpLabel = new Label("🎯 LEVEL UP 🎯");
+        levelUpLabel.setStyle(
+                "-fx-font-size: 42px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-text-fill: #00FFFF;" +
+                        "-fx-font-smoothing-type: lcd;"
+        );
+        DropShadow cyanGlow = new DropShadow();
+        cyanGlow.setColor(Color.CYAN);
+        cyanGlow.setRadius(15);
+        cyanGlow.setSpread(0.4);
+        levelUpLabel.setEffect(cyanGlow);
+
+        // Challenge label
+        Label challengeLabel = new Label("⭐ MISSION MODE ⭐");
+        challengeLabel.setStyle(
+                "-fx-font-size: 18px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-text-fill: #FFD700;" +
+                        "-fx-padding: 3 0 0 0;" +
+                        "-fx-font-smoothing-type: lcd;"
+        );
+
+        // "TARGET CHALLENGE" title
+        Label targetModeLabel = new Label("TARGET CHALLENGE");
+        targetModeLabel.setStyle(
+                "-fx-font-size: 32px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-text-fill: #FF69B4;" +
+                        "-fx-font-smoothing-type: lcd;"
+        );
+        DropShadow pinkGlow = new DropShadow();
+        pinkGlow.setColor(Color.rgb(255, 105, 180));
+        pinkGlow.setRadius(12);
+        pinkGlow.setSpread(0.3);
+        targetModeLabel.setEffect(pinkGlow);
+
+        // Mission description
+        Label missionLabel = new Label("Complete special missions!");
+        missionLabel.setStyle(
+                "-fx-font-size: 15px;" +
+                        "-fx-text-fill: #FFFFFF;" +
+                        "-fx-font-style: italic;" +
+                        "-fx-padding: 3 0 0 0;" +
+                        "-fx-font-smoothing-type: lcd;"
+        );
+
+        // Objectives
+        Label objective1 = new Label("• Clear pre-filled patterns");
+        objective1.setStyle(
+                "-fx-font-size: 13px;" +
+                        "-fx-text-fill: #00FF00;" +
+                        "-fx-padding: 5 0 0 0;" +
+                        "-fx-font-smoothing-type: lcd;"
+        );
+
+        Label objective2 = new Label("• Time limit: 3 minutes");
+        objective2.setStyle(
+                "-fx-font-size: 13px;" +
+                        "-fx-text-fill: #FFA500;" +
+                        "-fx-padding: 2 0 0 0;" +
+                        "-fx-font-smoothing-type: lcd;"
+        );
+
+        // Warning
+        Label warningLabel = new Label("⏰ Beat the clock!");
+        warningLabel.setStyle(
+                "-fx-font-size: 14px;" +
+                        "-fx-text-fill: #FF4444;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-padding: 10 0 0 0;" +
+                        "-fx-font-smoothing-type: lcd;"
+        );
+
+        container.getChildren().addAll(
+                levelUpLabel,
+                challengeLabel,
+                targetModeLabel,
+                missionLabel,
+                objective1,
+                objective2,
+                warningLabel
         );
 
         getChildren().add(container);

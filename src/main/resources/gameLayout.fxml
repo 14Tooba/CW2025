@@ -21,17 +21,10 @@
         </VBox>
     </Group>
 
+    <!-- Score display - single clean version -->
     <VBox layoutX="10" layoutY="40" spacing="3" alignment="TOP_LEFT" style="-fx-background-color: transparent;">
         <Label text="SCORE" style="-fx-text-fill: #FFD700; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: transparent;"/>
         <Label fx:id="scoreLabel" text="0" style="-fx-text-fill: #FFFFFF; -fx-font-size: 28px; -fx-font-weight: bold; -fx-background-color: transparent;"/>
-    <VBox layoutX="10" layoutY="40" spacing="3" alignment="TOP_LEFT">
-        <Label text="SCORE" style="-fx-text-fill: #FFD700; -fx-font-size: 14px; -fx-font-weight: bold;"/>
-        <Label fx:id="scoreLabel" text="0" style="-fx-text-fill: #FFFFFF; -fx-font-size: 28px; -fx-font-weight: bold;"/>
-
-
-    <VBox layoutX="10" layoutY="30" spacing="5" alignment="TOP_LEFT">
-        <Label text="SCORE" style="-fx-text-fill: #FFD700; -fx-font-size: 16px; -fx-font-weight: bold; -fx-font-family: 'Let''s go Digital';"/>
-        <Label fx:id="scoreLabel" text="0" style="-fx-text-fill: #FFD700; -fx-font-size: 36px; -fx-font-weight: bold; -fx-font-family: 'Let''s go Digital';"/>
     </VBox>
 
     <stylesheets>
