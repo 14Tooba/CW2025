@@ -97,16 +97,17 @@ public class TargetChallengeManager {
 
     /**
      * Generates a tower pattern in the middle of the board.
+     * Smaller tower - only 3 rows high for easier gameplay.
      */
     private void generateTowerPattern(int[][] board, int width, int height) {
         int centerX = height / 2;
         int towerWidth = 3;
-        int towerHeight = 12;
-        int startY = width - towerHeight;
+        int towerHeight = 3;  // Changed from 12 to 3 rows
+        int startY = width - towerHeight - 2;  // Position it slightly above bottom
 
-        for (int y = startY; y < width; y++) {
+        for (int y = startY; y < startY + towerHeight; y++) {
             for (int x = centerX - towerWidth/2; x <= centerX + towerWidth/2; x++) {
-                if (x >= 0 && x < height && y >= 0) {
+                if (x >= 0 && x < height && y >= 0 && y < width) {
                     board[y][x] = 7; // Use color 7 for target blocks
                     targetBlockPositions.add(new Point(x, y));
                 }

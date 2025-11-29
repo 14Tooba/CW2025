@@ -24,6 +24,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 import javafx.scene.control.Label;
+import javafx.animation.AnimationTimer;
 
 import java.awt.*;
 
@@ -93,6 +94,7 @@ public class GuiController implements Initializable {
 
     //for the background in Lava level
     private boolean isLavaMode = false;
+    private AnimationTimer targetChallengeTimer;
 
     //for Target Challenge UI
     @FXML
@@ -383,8 +385,12 @@ public class GuiController implements Initializable {
         if (missionLabel != null && mission != null) {
             missionLabel.setText(mission.getName());
         }
-    }
 
+        // Start timer update loop if not already running
+        if (targetChallengeTimer == null) {
+            startTargetChallengeTimer();
+        }
+    }
     /**
      * Hides the Target Challenge UI when not in Target Challenge mode.
      */
@@ -394,6 +400,39 @@ public class GuiController implements Initializable {
             targetChallengeContainer.setVisible(false);
             targetChallengeContainer.setManaged(false);
         }
+        if (targetChallengeTimer != null) {
+            targetChallengeTimer.stop();
+            targetChallengeTimer = null;
+        }
+    }
+
+
+
+    /**
+     * Starts the timer update loop for Target Challenge.
+     */
+    private void startTargetChallengeTimer() {
+        targetChallengeTimer = new AnimationTimer() {
+            private long lastUpdate = 0;
+
+            @Override
+            public void handle(long now) {
+                // Update every second (1_000_000_000 nanoseconds)
+                if (now - lastUpdate >= 1_000_000_000) {
+                    if (isTargetChallengeMode && eventListener instanceof GameController) {
+                        GameController controller = (GameController) eventListener;
+                        if (controller.getBoard().getTargetChallengeManager().isActive()) {
+                            String formattedTime = controller.getBoard().getTargetChallengeManager().getFormattedTime();
+                            if (timerLabel != null) {
+                                timerLabel.setText("Time: " + formattedTime);
+                            }
+                        }
+                    }
+                    lastUpdate = now;
+                }
+            }
+        };
+        targetChallengeTimer.start();
     }
 
 
@@ -464,7 +503,6 @@ public class GuiController implements Initializable {
      * @param levelName Name of next level
      */
     public void showLevelUp(String levelName) {
-
         // Pause game immediately
         timeLine.pause();
         if (gameTimer != null) gameTimer.pause();
@@ -474,28 +512,35 @@ public class GuiController implements Initializable {
         notification.setPrefSize(300, 510);
         notification.setMinSize(300, 510);
         notification.setMaxSize(300, 510);
-        notification.setLayoutX(0);
-        notification.setLayoutY(0);
 
-        // Get the ROOT pane
-        javafx.scene.layout.Pane root = (javafx.scene.layout.Pane) gamePanel.getScene().getRoot();
+        // CENTER the notification properly
+        notification.setLayoutX(0);  // Keep at 0 since parent StackPane centers it
+        notification.setLayoutY(0);  // Keep at 0 since parent StackPane centers it
 
-        // Add on top of EVERYTHING
-        root.getChildren().add(notification);
-        notification.toFront();
+        // Add to the groupNotification which is now in StackPane
+        groupNotification.getChildren().add(notification);
+        groupNotification.setVisible(true);
 
-
-        // Wait 3 seconds
-        PauseTransition pause = new PauseTransition(Duration.seconds(5));
+        //Remove after 3 seconds
+        PauseTransition pause = new PauseTransition(Duration.seconds(3));
         pause.setOnFinished(e -> {
-            System.out.println("Removing notification and resuming");
-            root.getChildren().remove(notification);
-            // Set background based on level name
-            boolean isLava = levelName.toUpperCase().contains("LAVA");
-            setLavaBackground(isLava);
+            groupNotification.getChildren().remove(notification);
+            groupNotification.setVisible(false);
+
+            // Resume game based on level
+            if (levelName.contains("LAVA")) {
+                setLavaBackground(true);
+            } else {
+                setLavaBackground(false);
+            }
+
+            // Hide Target Challenge UI when not in target mode
+            if (!levelName.contains("TARGET")) {
+                hideTargetChallengeUI();
+            }
+
             timeLine.play();
-            if (gameTimer != null) gameTimer.start();
-            gamePanel.requestFocus();
+            if (gameTimer != null) gameTimer.resume();
         });
         pause.play();
     }
