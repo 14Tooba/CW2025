@@ -22,6 +22,18 @@ public class Main extends Application {
         MenuController menuController = new MenuController(primaryStage);
         primaryStage.setScene(menuController.getMenuScene());
         primaryStage.show();
+
+        // Set minimum window size
+        primaryStage.setMinWidth(300);
+        primaryStage.setMinHeight(600);
+
+        // Set initial size (make it bigger)
+        primaryStage.setWidth(300);
+        primaryStage.setHeight(600);
+
+        // Allow window to be resizable
+        primaryStage.setResizable(true);
+
     }
 
 

@@ -33,6 +33,13 @@ public class MainMenu extends StackPane {
                         "-fx-effect: dropshadow(gaussian, rgba(255,215,0,0.8), 20, 0, 0, 0);"
         );
 
+        Label tipLabel = new Label("💡 Maximize window for better game experience");
+        tipLabel.setStyle("-fx-text-fill: #FF69B4; " +  // Pink color
+                "-fx-font-size: 14px; " +
+                "-fx-font-style: italic; " +
+                "-fx-padding: 0 0 20 0;");  // Space below
+        tipLabel.setAlignment(Pos.CENTER);
+
         // Subtitle
         Label subtitleLabel = new Label("Enhanced Edition");
         subtitleLabel.setStyle(
@@ -45,6 +52,7 @@ public class MainMenu extends StackPane {
         startButton = createButton("START GAME", "#4CAF50", "#45a049");
         highScoreButton = createButton("HIGH SCORES", "#2196F3", "#0b7dda");
         quitButton = createButton("QUIT", "#f44336", "#da190b");
+
 
         // Instructions
         Label instructionsLabel = new Label("Controls: ← → ↑ ↓ or WASD • P: Pause • G: Ghost");
@@ -61,7 +69,7 @@ public class MainMenu extends StackPane {
         VBox buttonBox = new VBox(15, startButton, highScoreButton, quitButton);
         buttonBox.setAlignment(Pos.CENTER);
 
-        menuContainer.getChildren().addAll(titleBox, buttonBox, instructionsLabel);
+        menuContainer.getChildren().addAll(titleBox, tipLabel, buttonBox, instructionsLabel);
         getChildren().add(menuContainer);
     }
 
