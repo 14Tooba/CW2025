@@ -38,7 +38,9 @@ import javafx.scene.control.Label; //for score display
 import com.comp2042.model.game.LavaManager;
 import com.comp2042.model.game.SimpleBoard;
 import javafx.scene.paint.Color;
-
+import javafx.scene.layout.StackPane;
+import javafx.geometry.Pos;
+import javafx.scene.layout.HBox;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -507,25 +509,31 @@ public class GuiController implements Initializable {
         timeLine.pause();
         if (gameTimer != null) gameTimer.pause();
 
-        // Create notification with EXACT size
+        // Create notification that fills the entire window
         LevelUpNotification notification = new LevelUpNotification(levelName);
-        notification.setPrefSize(300, 510);
-        notification.setMinSize(300, 510);
-        notification.setMaxSize(300, 510);
 
-        // CENTER the notification properly
-        notification.setLayoutX(0);  // Keep at 0 since parent StackPane centers it
-        notification.setLayoutY(0);  // Keep at 0 since parent StackPane centers it
+        // Get the root of the entire scene (the HBox)
+        HBox root = (HBox) gamePanel.getScene().getRoot();
 
-        // Add to the groupNotification which is now in StackPane
-        groupNotification.getChildren().add(notification);
-        groupNotification.setVisible(true);
+        // Create a full-screen overlay
+        StackPane fullScreenOverlay = new StackPane();
+        fullScreenOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8);"); // Semi-transparent background
+        fullScreenOverlay.setAlignment(Pos.CENTER);
 
-        //Remove after 3 seconds
+        // Make the overlay fill the entire window
+        fullScreenOverlay.prefWidthProperty().bind(root.widthProperty());
+        fullScreenOverlay.prefHeightProperty().bind(root.heightProperty());
+
+        // Add the notification to the overlay
+        fullScreenOverlay.getChildren().add(notification);
+
+        // Add the overlay on top of everything
+        root.getChildren().add(fullScreenOverlay);
+
+        // Remove after 3 seconds
         PauseTransition pause = new PauseTransition(Duration.seconds(3));
         pause.setOnFinished(e -> {
-            groupNotification.getChildren().remove(notification);
-            groupNotification.setVisible(false);
+            root.getChildren().remove(fullScreenOverlay);
 
             // Resume game based on level
             if (levelName.contains("LAVA")) {
@@ -544,7 +552,6 @@ public class GuiController implements Initializable {
         });
         pause.play();
     }
-
 
 
     /**
