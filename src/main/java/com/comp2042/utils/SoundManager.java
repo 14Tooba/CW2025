@@ -1,74 +1,134 @@
 package com.comp2042.utils;
 
-import java.awt.Toolkit;
+import javax.sound.sampled.*;
+import java.io.IOException;
+import java.net.URL;
 
 /**
- * Manages game sound effects using system beep.
- * Simple implementation without external audio files.
+ * Simple sound manager using Java's built-in audio support.
  */
 public class SoundManager {
 
+    private Clip backgroundMusicClip;
+    private boolean musicEnabled = true;
     private boolean soundEnabled = true;
-    private final Toolkit toolkit;
+    private float volume = 0.5f; // 50% volume
 
+    /**
+     * Constructor
+     */
     public SoundManager() {
-        toolkit = Toolkit.getDefaultToolkit();
+        loadBackgroundMusic();
     }
 
     /**
-     * Plays line clear sound effect.
+     * Loads background music using javax.sound
      */
-    public void playLineClear() {
-        if (soundEnabled) {
-            toolkit.beep();
-        }
-    }
+    private void loadBackgroundMusic() {
+        try {
+            URL musicUrl = getClass().getResource("/background_music.wav"); // Note: Use WAV format
+            if (musicUrl != null) {
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(musicUrl);
+                backgroundMusicClip = AudioSystem.getClip();
+                backgroundMusicClip.open(audioIn);
 
-    /**
-     * Plays game over sound effect.
-     */
-    public void playGameOver() {
-        if (soundEnabled) {
-            // Double beep for emphasis
-            toolkit.beep();
-            try {
-                Thread.sleep(100);
-                toolkit.beep();
-            } catch (InterruptedException e) {
-                // Ignore
+                // Set volume
+                FloatControl volumeControl = (FloatControl) backgroundMusicClip.getControl(FloatControl.Type.MASTER_GAIN);
+                float dB = (float) (Math.log(volume) / Math.log(10.0) * 20.0);
+                volumeControl.setValue(dB);
+
+                // Set to loop continuously
+                backgroundMusicClip.loop(Clip.LOOP_CONTINUOUSLY);
+
+                System.out.println("Background music loaded successfully!");
+            } else {
+                System.err.println("Background music file not found!");
             }
+        } catch (Exception e) {
+            System.err.println("Error loading background music: " + e.getMessage());
         }
     }
 
     /**
-     * Plays brick drop sound effect.
+     * Starts playing background music
      */
-    public void playDrop() {
-        if (soundEnabled) {
-            toolkit.beep();
+    public void startBackgroundMusic() {
+        if (backgroundMusicClip != null && musicEnabled) {
+            backgroundMusicClip.start();
+            backgroundMusicClip.loop(Clip.LOOP_CONTINUOUSLY);
+            System.out.println("Background music started");
         }
     }
 
     /**
-     * Plays brick rotate sound effect.
+     * Stops background music
      */
+    public void stopBackgroundMusic() {
+        if (backgroundMusicClip != null) {
+            backgroundMusicClip.stop();
+            System.out.println("Background music stopped");
+        }
+    }
+
+    /**
+     * Pauses background music
+     */
+    public void pauseBackgroundMusic() {
+        if (backgroundMusicClip != null) {
+            backgroundMusicClip.stop();
+            System.out.println("Background music paused");
+        }
+    }
+
+    /**
+     * Resumes background music
+     */
+    public void resumeBackgroundMusic() {
+        if (backgroundMusicClip != null && musicEnabled) {
+            backgroundMusicClip.start();
+            backgroundMusicClip.loop(Clip.LOOP_CONTINUOUSLY);
+            System.out.println("Background music resumed");
+        }
+    }
+
+    /**
+     * Toggles music on/off
+     */
+    public void toggleBackgroundMusic() {
+        musicEnabled = !musicEnabled;
+        if (musicEnabled) {
+            startBackgroundMusic();
+        } else {
+            pauseBackgroundMusic();
+        }
+    }
+
+    // Simple sound effect methods
+    public void playMove() {
+        // Implementation for move sound
+    }
+
     public void playRotate() {
-        if (soundEnabled) {
-            toolkit.beep();
-        }
+        // Implementation for rotate sound
     }
 
-    /**
-     * Enables or disables all sounds.
-     */
-    public void setSoundEnabled(boolean enabled) {
-        this.soundEnabled = enabled;
+    public void playDrop() {
+        // Implementation for drop sound
     }
 
-    /**
-     * Checks if sound is currently enabled.
-     */
-    public boolean isSoundEnabled() {
-        return soundEnabled;
+    public void playLineClear() {
+        // Implementation for line clear sound
+    }
+
+    public void playGameOver() {
+        // Implementation for game over sound
+    }
+
+    public boolean isMusicEnabled() {
+        return musicEnabled;
+    }
+
+    public void setMusicEnabled(boolean enabled) {
+        this.musicEnabled = enabled;
     }
 }
