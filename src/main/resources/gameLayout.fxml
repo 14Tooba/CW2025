@@ -7,67 +7,75 @@
 <HBox fx:controller="com.comp2042.view.GuiController"
       xmlns:fx="http://javafx.com/fxml"
       alignment="CENTER"
-      spacing="20"
+      spacing="15"
       style="-fx-background-color: #1a1a1a; -fx-padding: 20;">
 
-    <!-- Left Panel for Score and Info -->
-    <VBox alignment="TOP_CENTER" spacing="30" minWidth="150">
-        <!-- Score Section -->
+    <!-- Left Panel for Score and Info - Adjusted width and padding -->
+    <VBox alignment="TOP_CENTER" spacing="30" minWidth="120" prefWidth="120">
+
+        <!-- Empty space at top to push score down -->
+        <Region minHeight="50"/>
+
+        <!-- Score Section - Moved down -->
         <VBox spacing="5" alignment="CENTER"
               style="-fx-background-color: rgba(0,0,0,0.5);
-                     -fx-padding: 15;
+                     -fx-padding: 12;
                      -fx-border-color: #FFD700;
                      -fx-border-width: 2;
                      -fx-border-radius: 10;
                      -fx-background-radius: 10;">
             <Label text="SCORE"
                    style="-fx-text-fill: #FFD700;
-                          -fx-font-size: 20px;
+                          -fx-font-size: 18px;
                           -fx-font-weight: bold;"/>
             <Label fx:id="scoreLabel"
                    text="0"
                    style="-fx-text-fill: #FFFFFF;
-                          -fx-font-size: 38px;
+                          -fx-font-size: 32px;
                           -fx-font-weight: bold;"/>
         </VBox>
 
         <!-- Target Challenge Info -->
         <VBox fx:id="targetChallengeContainer"
-              spacing="8"
+              spacing="6"
               alignment="CENTER"
               visible="false"
               managed="false"
               style="-fx-background-color: rgba(0,0,0,0.5);
-                     -fx-padding: 15;
+                     -fx-padding: 12;
                      -fx-border-color: #00FFFF;
                      -fx-border-width: 2;
                      -fx-border-radius: 10;
                      -fx-background-radius: 10;">
             <Label text="MISSION"
                    style="-fx-text-fill: #00FFFF;
-                          -fx-font-size: 18px;
+                          -fx-font-size: 16px;
                           -fx-font-weight: bold;"/>
             <Label fx:id="missionLabel"
                    text=""
                    style="-fx-text-fill: #FFFFFF;
-                          -fx-font-size: 14px;
+                          -fx-font-size: 12px;
                           -fx-text-alignment: center;
-                          -fx-wrap-text: true;"/>
+                          -fx-wrap-text: true;
+                          -fx-max-width: 100;"/>
             <Label fx:id="targetBlocksLabel"
                    text="Blocks: 0"
                    style="-fx-text-fill: #00FF00;
-                          -fx-font-size: 16px;
+                          -fx-font-size: 14px;
                           -fx-font-weight: bold;"/>
             <Label fx:id="timerLabel"
                    text="Time: 03:00"
                    style="-fx-text-fill: #FFA500;
-                          -fx-font-size: 18px;
+                          -fx-font-size: 16px;
                           -fx-font-weight: bold;"/>
         </VBox>
     </VBox>
 
-    <!-- Game Board Container - FIXED positioning -->
-    <StackPane alignment="CENTER" maxWidth="300" maxHeight="600">
+    <!-- Center spacer to push game board more to the left -->
+    <Region minWidth="10"/>
+
+    <!-- Game Board Container - More centered -->
+    <StackPane alignment="CENTER" maxWidth="300" maxHeight="600" minWidth="300">
         <Pane maxWidth="300" maxHeight="600" prefWidth="300" prefHeight="600">
             <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
 
@@ -78,13 +86,16 @@
             </BorderPane>
         </Pane>
 
-        <!-- Notification overlay - Now properly centered over game board -->
+        <!-- Game Over notification -->
         <Group fx:id="groupNotification">
             <VBox alignment="CENTER">
                 <GameOverPanel fx:id="gameOverPanel"/>
             </VBox>
         </Group>
     </StackPane>
+
+    <!-- Right spacer for balance -->
+    <Region minWidth="50"/>
 
     <stylesheets>
         <URL value="@window_style.css"/>
