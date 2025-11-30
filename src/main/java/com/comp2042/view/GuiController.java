@@ -114,7 +114,13 @@ public class GuiController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
+
+
         soundManager = new SoundManager();
+
+        // Start background music when game starts
+        soundManager.startBackgroundMusic();
+
         // Create pause menu
         pauseMenu = new PauseMenu();
         pauseMenu.setPrefSize(300, 510);
@@ -473,6 +479,7 @@ public class GuiController implements Initializable {
 
     public void gameOver() {
         soundManager.playGameOver();
+        soundManager.stopBackgroundMusic();
         timeLine.stop();
         if (gameTimer != null) gameTimer.stop();
         gameOverPanel.setVisible(true);
@@ -495,6 +502,7 @@ public class GuiController implements Initializable {
         if (gameTimer != null) gameTimer.start();
         isPause.setValue(Boolean.FALSE);
         isGameOver.setValue(Boolean.FALSE);
+        soundManager.startBackgroundMusic(); // for playing the music after new game
     }
 
 
@@ -583,6 +591,7 @@ public class GuiController implements Initializable {
         pauseMenu.setVisible(false);
         timeLine.play();
         if (gameTimer != null) gameTimer.resume();
+        soundManager.resumeBackgroundMusic();
         gamePanel.requestFocus();
     }
 
