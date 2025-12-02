@@ -32,7 +32,7 @@ public final class GameConstants {
 
     // Brick spawn position
     public static final int BRICK_SPAWN_X = 4;
-    public static final int BRICK_SPAWN_Y = 0; //changed spawn location of brick
+    public static final int BRICK_SPAWN_Y = 1; //changed spawn location of brick
 
     // Animation constants
     public static final double NOTIFICATION_FADE_START = 1.0;
