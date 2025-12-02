@@ -3,6 +3,7 @@ package com.comp2042.view;
 import com.comp2042.*;
 import com.comp2042.controller.GameController;
 import com.comp2042.controller.InputEventListener;
+import com.comp2042.model.scoring.HighScoreManager;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
@@ -98,6 +99,8 @@ public class GuiController implements Initializable {
     private boolean isLavaMode = false;
     private AnimationTimer targetChallengeTimer;
 
+    private HighScoreManager highScoreManager = new HighScoreManager();
+
     //for Target Challenge UI
     @FXML
     private VBox targetChallengeContainer;
@@ -122,15 +125,24 @@ public class GuiController implements Initializable {
         soundManager.startBackgroundMusic();
 
         // Create pause menu
+        // Initialize pause menu with proper centering
         pauseMenu = new PauseMenu();
-        pauseMenu.setPrefSize(300, 510);
-        pauseMenu.setLayoutX(0);
-        pauseMenu.setLayoutY(0);
+        pauseMenu.setVisible(false);
+        pauseMenu.setTranslateX(20);  // Center horizontally
+        pauseMenu.setTranslateY(120); // Center vertically
+        gamePanel.getChildren().add(pauseMenu);
 
+        // Fix: Set button action properly
+        pauseMenu.getResumeButton().setOnAction(e -> {
+            resumeGame();
+            gamePanel.requestFocus();// Important: return focus to game
+        });
+        //set button actions
         pauseMenu.getResumeButton().setOnAction(e -> resumeGame());
         pauseMenu.getQuitButton().setOnAction(e -> {
             System.exit(0); // Quit the game
         });
+
         // Create level up notification
         levelUpNotification = new LevelUpNotification("Next Level");
         levelUpNotification.setPrefSize(300, 510);
@@ -480,7 +492,9 @@ public class GuiController implements Initializable {
     public void gameOver() {
         soundManager.playGameOver();
         soundManager.stopBackgroundMusic();
+
         timeLine.stop();
+
         if (gameTimer != null) gameTimer.stop();
         gameOverPanel.setVisible(true);
         isGameOver.setValue(Boolean.TRUE);
@@ -489,6 +503,8 @@ public class GuiController implements Initializable {
         PauseTransition pause = new PauseTransition(Duration.seconds(3));
         pause.setOnFinished(e -> returnToMenu());
         pause.play();
+
+
     }
 
     public void newGame(ActionEvent actionEvent) {
@@ -505,52 +521,39 @@ public class GuiController implements Initializable {
         soundManager.startBackgroundMusic(); // for playing the music after new game
     }
 
-
     /**
-     * Shows blue "LEVEL UP" screen for 3 seconds.
-     * Pauses game, displays notification, then resumes.
-     *
-     * @param levelName Name of next level
+     * Displays level-up notification for 5 seconds.
+     * @param levelName Name of the next level
      */
     public void showLevelUp(String levelName) {
-        // Pause game immediately
         timeLine.pause();
         if (gameTimer != null) gameTimer.pause();
 
-        // Create notification that fills the entire window
         LevelUpNotification notification = new LevelUpNotification(levelName);
 
-        // Get the root of the entire scene (the HBox)
         HBox root = (HBox) gamePanel.getScene().getRoot();
 
-        // Create a full-screen overlay
         StackPane fullScreenOverlay = new StackPane();
-        fullScreenOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8);"); // Semi-transparent background
+        fullScreenOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.85);");
         fullScreenOverlay.setAlignment(Pos.CENTER);
 
-        // Make the overlay fill the entire window
         fullScreenOverlay.prefWidthProperty().bind(root.widthProperty());
         fullScreenOverlay.prefHeightProperty().bind(root.heightProperty());
 
-        // Add the notification to the overlay
         fullScreenOverlay.getChildren().add(notification);
-
-        // Add the overlay on top of everything
         root.getChildren().add(fullScreenOverlay);
 
-        // Remove after 3 seconds
-        PauseTransition pause = new PauseTransition(Duration.seconds(3));
+        //Changed from 3 to 5 seconds
+        PauseTransition pause = new PauseTransition(Duration.seconds(5));
         pause.setOnFinished(e -> {
             root.getChildren().remove(fullScreenOverlay);
 
-            // Resume game based on level
             if (levelName.contains("LAVA")) {
                 setLavaBackground(true);
             } else {
                 setLavaBackground(false);
             }
 
-            // Hide Target Challenge UI when not in target mode
             if (!levelName.contains("TARGET")) {
                 hideTargetChallengeUI();
             }

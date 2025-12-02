@@ -9,16 +9,28 @@ import javafx.scene.paint.Color;
 
 /**
  * Epic level up notification with special styling for lava mode.
+ * author @Tooba
  *
  */
 public class LevelUpNotification extends StackPane {
 
+    /**
+     * Creates level-up notification with full-window size.
+     * @param levelName Name of the next level
+     */
     public LevelUpNotification(String levelName) {
-        setPrefSize(500, 600);
-        setMinSize(400, 500);
-        setMaxSize(600, 700);
+        // Much larger size for full-window coverage
+        setPrefSize(800, 650);
+        setMinSize(700, 600);
+        setMaxSize(900, 750);
 
-        // Check if it's lava mode or target challenge for special styling
+        // Semi-transparent background
+        setStyle("-fx-background-color: rgba(0, 0, 0, 0.9); " +
+                "-fx-border-color: #FFFFFF; " +
+                "-fx-border-width: 4; " +
+                "-fx-border-radius: 25; " +
+                "-fx-background-radius: 25;");
+
         boolean isLavaMode = levelName.toUpperCase().contains("LAVA");
         boolean isTargetChallenge = levelName.toUpperCase().contains("TARGET");
 
@@ -38,13 +50,13 @@ public class LevelUpNotification extends StackPane {
         // Dramatic dark background
         setStyle("-fx-background-color: linear-gradient(to bottom, #1a0000, #330000, #1a0000);");
 
-        VBox container = new VBox(18);
+        VBox container = new VBox(20);
         container.setAlignment(Pos.CENTER);
 
         // "LEVEL UP!" - Gold with subtle glow
         Label levelUpLabel = new Label("⚠ LEVEL UP ⚠");
         levelUpLabel.setStyle(
-                "-fx-font-size: 56px;" +
+                "-fx-font-size: 72px;" +
                         "-fx-font-weight: bold;" +
                         "-fx-text-fill: #FFD700;" +
                         "-fx-font-smoothing-type: lcd;"
@@ -58,7 +70,7 @@ public class LevelUpNotification extends StackPane {
         // Warning label
         Label warningLabel = new Label("⚠ DANGER AHEAD ⚠");
         warningLabel.setStyle(
-                "-fx-font-size: 26px;" +
+                "-fx-font-size: 35px;" +
                         "-fx-font-weight: bold;" +
                         "-fx-text-fill: #FF4500;" +
                         "-fx-padding: 3 0 0 0;" +
@@ -68,7 +80,7 @@ public class LevelUpNotification extends StackPane {
         // "LAVA SURVIVAL" - Smaller with subtle glow
         Label lavaModeLabel = new Label("🔥 LAVA SURVIVAL 🔥");
         lavaModeLabel.setStyle(
-                "-fx-font-size: 42px;" +
+                "-fx-font-size: 52px;" +
                         "-fx-font-weight: bold;" +
                         "-fx-text-fill: #FF4500;" +
                         "-fx-font-smoothing-type: lcd;"
@@ -82,7 +94,7 @@ public class LevelUpNotification extends StackPane {
         // Challenge description
         Label challengeLabel = new Label("Lava descends from above!");
         challengeLabel.setStyle(
-                "-fx-font-size: 18px;" +
+                "-fx-font-size: 25px;" +
                         "-fx-text-fill: #FFA500;" +
                         "-fx-font-style: italic;" +
                         "-fx-padding: 3 0 0 0;" +
@@ -92,7 +104,7 @@ public class LevelUpNotification extends StackPane {
         // Objective
         Label objectiveLabel = new Label("Clear 2 lines to survive");
         objectiveLabel.setStyle(
-                "-fx-font-size: 17px;" +
+                "-fx-font-size: 25px;" +
                         "-fx-text-fill: #FFD700;" +
                         "-fx-font-weight: bold;" +
                         "-fx-padding: 8 0 0 0;" +
@@ -102,7 +114,7 @@ public class LevelUpNotification extends StackPane {
         // Warning at bottom
         Label bottomWarning = new Label("Don't let lava touch your blocks!");
         bottomWarning.setStyle(
-                "-fx-font-size: 17px;" +
+                "-fx-font-size: 30px;" +
                         "-fx-text-fill: #FF6B6B;" +
                         "-fx-padding: 12 0 0 0;" +
                         "-fx-font-smoothing-type: lcd;"
@@ -127,13 +139,13 @@ public class LevelUpNotification extends StackPane {
         // Purple gradient background
         setStyle("-fx-background-color: linear-gradient(to bottom, #2D0A4B, #4A148C, #2D0A4B);");
 
-        VBox container = new VBox(15);
+        VBox container = new VBox(20);
         container.setAlignment(Pos.CENTER);
 
         // "LEVEL UP!" with target icon
         Label levelUpLabel = new Label("🎯 LEVEL UP 🎯");
         levelUpLabel.setStyle(
-                "-fx-font-size: 56px;" +
+                "-fx-font-size: 72px;" +
                         "-fx-font-weight: bold;" +
                         "-fx-text-fill: #00FFFF;" +
                         "-fx-font-smoothing-type: lcd;"
@@ -147,7 +159,7 @@ public class LevelUpNotification extends StackPane {
         // Challenge label
         Label challengeLabel = new Label("⭐ MISSION MODE ⭐");
         challengeLabel.setStyle(
-                "-fx-font-size: 22px;" +
+                "-fx-font-size: 32px;" +
                         "-fx-font-weight: bold;" +
                         "-fx-text-fill: #FFD700;" +
                         "-fx-padding: 3 0 0 0;" +
@@ -157,7 +169,7 @@ public class LevelUpNotification extends StackPane {
         // "TARGET CHALLENGE" title
         Label targetModeLabel = new Label("TARGET CHALLENGE");
         targetModeLabel.setStyle(
-                "-fx-font-size: 42px;" +
+                "-fx-font-size: 52px;" +
                         "-fx-font-weight: bold;" +
                         "-fx-text-fill: #FF69B4;" +
                         "-fx-font-smoothing-type: lcd;"
@@ -171,7 +183,7 @@ public class LevelUpNotification extends StackPane {
         // Mission description
         Label missionLabel = new Label("Complete special missions!");
         missionLabel.setStyle(
-                "-fx-font-size: 18px;" +
+                "-fx-font-size: 30px;" +
                         "-fx-text-fill: #FFFFFF;" +
                         "-fx-font-style: italic;" +
                         "-fx-padding: 3 0 0 0;" +
@@ -181,7 +193,7 @@ public class LevelUpNotification extends StackPane {
         // Objectives
         Label objective1 = new Label("• Clear pre-filled patterns");
         objective1.setStyle(
-                "-fx-font-size: 16px;" +
+                "-fx-font-size: 30px;" +
                         "-fx-text-fill: #00FF00;" +
                         "-fx-padding: 5 0 0 0;" +
                         "-fx-font-smoothing-type: lcd;"
@@ -189,7 +201,7 @@ public class LevelUpNotification extends StackPane {
 
         Label objective2 = new Label("• Time limit: 3 minutes");
         objective2.setStyle(
-                "-fx-font-size: 16px;" +
+                "-fx-font-size: 30px;" +
                         "-fx-text-fill: #FFA500;" +
                         "-fx-padding: 2 0 0 0;" +
                         "-fx-font-smoothing-type: lcd;"
@@ -198,7 +210,7 @@ public class LevelUpNotification extends StackPane {
         // Warning
         Label warningLabel = new Label("⏰ Beat the clock!");
         warningLabel.setStyle(
-                "-fx-font-size: 17px;" +
+                "-fx-font-size: 30px;" +
                         "-fx-text-fill: #FF4444;" +
                         "-fx-font-weight: bold;" +
                         "-fx-padding: 10 0 0 0;" +
