@@ -55,7 +55,7 @@ Throughout the development, proper Git practices were maintained with:
 
 #### Step 1: Clone the Repository
 ```bash
-git clone <https://github.com/14Tooba/CW2025> cd CW2025-master
+https://github.com/14Tooba/CW2025
 ```
 
 #### Step 2: Verify Java Installation
