@@ -14,6 +14,16 @@ import java.util.Set;
 
 import java.awt.*;
 
+
+/**
+ * Main implementation of the Tetris game board with multi-level support.
+ * Manages brick placement, collision detection, line clearing, and level-specific mechanics.
+ * Integrates LavaManager for Lava Survival mode and TargetChallengeManager for mission-based gameplay.
+ *
+ * @author Tooba Nauman
+ * @version 1.0
+ * @since 2025
+ */
 public class SimpleBoard implements Board {
 
     private final int width;
@@ -28,6 +38,16 @@ public class SimpleBoard implements Board {
     private int levelLinesCleared = 0;
     private final TargetChallengeManager targetChallengeManager;
 
+
+
+    /**
+     * Constructs a SimpleBoard with specified dimensions.
+     * Initializes game matrix, brick generator, rotator, score tracker,
+     * and level-specific managers.
+     *
+     * @param width The height of the game board (number of rows)
+     * @param height The width of the game board (number of columns)
+     */
     public SimpleBoard(int width, int height) {
         this.width = width;
         this.height = height;
@@ -39,6 +59,15 @@ public class SimpleBoard implements Board {
         this.targetChallengeManager = new TargetChallengeManager(); //initialize for target challenge//initialize for new level
     }
 
+
+
+
+    /**
+     * Attempts to move the current brick down by one row.
+     * Checks for collision with board boundaries and existing blocks.
+     *
+     * @return true if brick moved successfully, false if collision detected
+     */
     @Override
     public boolean moveBrickDown() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
@@ -54,6 +83,13 @@ public class SimpleBoard implements Board {
     }
 
 
+
+    /**
+     * Attempts to move the current brick left by one column.
+     * Checks for collision with board boundaries and existing blocks.
+     *
+     * @return true if brick moved successfully, false if collision detected
+     */
     @Override
     public boolean moveBrickLeft() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
@@ -68,6 +104,13 @@ public class SimpleBoard implements Board {
         }
     }
 
+
+    /**
+     * Attempts to move the current brick right by one column.
+     * Checks for collision with board boundaries and existing blocks.
+     *
+     * @return true if brick moved successfully, false if collision detected
+     */
     @Override
     public boolean moveBrickRight() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
@@ -82,6 +125,13 @@ public class SimpleBoard implements Board {
         }
     }
 
+
+    /**
+     * Attempts to rotate the current brick counter-clockwise.
+     * Checks for collision at the new orientation before applying rotation.
+     *
+     * @return true if rotation successful, false if collision detected
+     */
     @Override
     public boolean rotateLeftBrick() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
@@ -95,6 +145,13 @@ public class SimpleBoard implements Board {
         }
     }
 
+
+    /**
+     * Spawns a new brick at the top of the board.
+     * Retrieves next brick from generator and positions it at spawn point.
+     *
+     * @return true if spawn position is blocked (game over condition), false otherwise
+     */
     //Updated so that the spawn position of the bricks is now at the top
     @Override
     public boolean createNewBrick() {
@@ -114,6 +171,12 @@ public class SimpleBoard implements Board {
         );
     }
 
+
+    /**
+     * Retrieves the current game board matrix.
+     *
+     * @return 2D integer array representing the board state
+     */
     @Override
     public int[][] getBoardMatrix() {
         return currentGameMatrix;
@@ -121,6 +184,12 @@ public class SimpleBoard implements Board {
 
 
 
+    /**
+     * Constructs view data for rendering the current game state.
+     * Includes current brick position, shape, next brick preview, and ghost position.
+     *
+     * @return ViewData object containing all rendering information
+     */
     //updated the simple board so that it can calculate the ghost position.
     @Override
     public ViewData getViewData() {
@@ -140,13 +209,23 @@ public class SimpleBoard implements Board {
         );
     }
 
+    /**
+     * Merges the current brick into the board's background matrix.
+     * Called when brick lands and becomes part of the static board.
+     */
     @Override
     public void mergeBrickToBackground() {
         currentGameMatrix = MatrixOperations.merge(currentGameMatrix, brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
     }
 
 
-
+    /**
+     * Checks for and clears any complete rows on the board.
+     * Updates level-specific managers and calculates score bonuses.
+     * Handles lava updates and target block tracking for special modes.
+     *
+     * @return ClearRow object containing lines removed count, new matrix, and score bonus
+     */
     //updated for the new lava level
     @Override
     public ClearRow clearRows() {
@@ -177,12 +256,22 @@ public class SimpleBoard implements Board {
         return clearRow;
     }
 
+
+    /**
+     * Retrieves the current score tracker.
+     *
+     * @return Score object tracking player's current score
+     */
     @Override
     public Score getScore() {
         return score;
     }
 
 
+    /**
+     * Resets the board for a new game session.
+     * Clears matrix, resets score, returns to Classic level, and spawns first brick.
+     */
     @Override
     public void newGame() {
         currentGameMatrix = new int[width][height];
@@ -192,8 +281,6 @@ public class SimpleBoard implements Board {
         lavaManager.reset();               // update for lava game
         createNewBrick();
     }
-
-
 
     /**
      * Checks if any blocks exist in the spawn area (top 2 hidden rows).
@@ -210,8 +297,6 @@ public class SimpleBoard implements Board {
         }
         return false;
     }
-
-
 
 
     /**
