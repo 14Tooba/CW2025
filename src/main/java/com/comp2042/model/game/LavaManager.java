@@ -7,6 +7,9 @@ import com.comp2042.constants.GameConstants;
  * Lava slowly descends from the top of the board.
  * Game ends if lava touches any placed blocks.
  *
+ * @author Tooba Nauman
+ * @version 1.0
+ * @since 2025
  */
 public class LavaManager {
 
@@ -32,7 +35,8 @@ public class LavaManager {
 
     /**
      * Updates lava position based on elapsed time.
-     * Lava moves down one row every LAVA_MOVE_INTERVAL_MS milliseconds.
+     * Moves lava down one row every LAVA_MOVE_INTERVAL_MS milliseconds (4 seconds).
+     * Should be called regularly during gameplay.
      */
     public void update() {
         if (!active) return;
@@ -44,11 +48,13 @@ public class LavaManager {
         }
     }
 
+
     /**
-     * Checks if lava has collided with any placed blocks.
+     * Checks if lava has collided with any placed blocks on the board.
+     * Scans all rows occupied by lava for non-empty cells.
      *
-     * @param boardMatrix The game board matrix
-     * @return true if lava touched a block (game over), false otherwise
+     * @param boardMatrix The game board 2D array to check
+     * @return true if lava touched a block (game over condition), false otherwise
      */
     public boolean checkLavaCollision(int[][] boardMatrix) {
         if (!active || lavaRow < 0) {
