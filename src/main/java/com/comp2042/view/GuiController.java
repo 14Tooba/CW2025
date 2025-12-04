@@ -29,16 +29,10 @@ import javafx.animation.AnimationTimer;
 
 import java.awt.*;
 
-import com.comp2042.utils.SoundManager; //for SoundManager
-import com.comp2042.view.PauseMenu; //for PauseMenu
+import com.comp2042.utils.SoundManager;
 import javafx.stage.Stage;
 import com.comp2042.controller.MenuController;
 import javafx.animation.PauseTransition;
-import javafx.util.Duration;
-import javafx.scene.control.Label; //for score display
-import com.comp2042.model.game.LavaManager;
-import com.comp2042.model.game.SimpleBoard;
-import javafx.scene.paint.Color;
 import javafx.scene.layout.StackPane;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
@@ -251,7 +245,7 @@ public class GuiController implements Initializable {
                 ghostBrickPanel.add(rectangle, j, i);
             }
         }
-//adding the ghost rectangles to the scene
+        //adding the ghost rectangles to the scene
         ((javafx.scene.layout.Pane) gamePanel.getParent()).getChildren().add(ghostBrickPanel);
 
 
@@ -269,6 +263,7 @@ public class GuiController implements Initializable {
         pauseMenu.setLayoutX(0);
         pauseMenu.setLayoutY(0);
         ((javafx.scene.layout.Pane) gamePanel.getParent()).getChildren().add(pauseMenu);
+
 
         // Add level up notification to scene
         ((javafx.scene.layout.Pane) gamePanel.getParent()).getChildren().add(levelUpNotification);
@@ -603,7 +598,7 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
-//returning the main menu after game is over.
+    //returning the main menu after game is over.
     private void returnToMenu() {
         if (stage != null && menuController != null) {
             stage.setScene(menuController.getMenuScene());
