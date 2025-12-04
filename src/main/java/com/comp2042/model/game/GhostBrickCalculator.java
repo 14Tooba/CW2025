@@ -5,18 +5,25 @@ import com.comp2042.utils.MatrixOperations;
 import java.awt.Point;
 
 /**
- * Calculates ghost brick position (where brick will land).
- * Follows Single Responsibility Principle.
+ * Utility class for calculating ghost brick landing positions.
+ * The ghost brick shows players where the current piece will land
+ * if dropped straight down without rotation or horizontal movement.
+ * Follows Single Responsibility Principle by isolating position calculation logic.
+ *
+ * @author Tooba Nauman
+ * @version 1.0
+ * @since 2025
  */
 public class GhostBrickCalculator {
 
     /**
-     * Calculates the landing position for a brick if it drops straight down.
+     * Calculates the landing position for a brick if dropped straight down.
+     * Simulates brick falling until collision is detected with board bottom or existing blocks.
      *
-     * @param gameMatrix Current game board state
-     * @param brickShape Current brick shape matrix
-     * @param currentPosition Current brick position
-     * @return Point representing where brick will land
+     * @param gameMatrix Current game board state (2D array)
+     * @param brickShape Current brick shape matrix (2D array)
+     * @param currentPosition Current brick position as Point(x, y)
+     * @return Point representing the landing position, or current position if inputs are null
      */
     public static Point calculateLandingPosition(int[][] gameMatrix, int[][] brickShape, Point currentPosition) {
         if (gameMatrix == null || brickShape == null || currentPosition == null) {

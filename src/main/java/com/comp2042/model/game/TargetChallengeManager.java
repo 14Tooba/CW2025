@@ -4,12 +4,21 @@ import java.awt.Point;
 import java.util.*;
 
 /**
- * Manages the Target Challenge level mechanics.
- * Handles pre-filled block patterns, mission types, timer, and win conditions.
+ * Manages the Target Challenge level mechanics (Level 3).
+ * Handles pre-filled block patterns, mission selection, countdown timer,
+ * and win condition tracking. Players must clear all target blocks
+ * within a 3-minute time limit.
+ *
+ * @author Tooba Nauman
+ * @version 1.0
+ * @since 2025
  */
 public class TargetChallengeManager {
 
-    /** Mission types available in Target Challenge */
+    /**
+     * Enumeration of available mission types in Target Challenge mode.
+     * Each mission presents a unique block pattern to clear.
+     */
     public enum MissionType {
         TOWER("Clear the Tower", "Tall stack in middle"),
         FRAME("Frame Buster", "Blocks around edges"),
@@ -48,7 +57,8 @@ public class TargetChallengeManager {
     }
 
     /**
-     * Activates the Target Challenge with a random mission.
+     * Activates Target Challenge mode with a randomly selected mission.
+     * Initializes timer and resets mission completion status.
      */
     public void activate() {
         active = true;
@@ -59,7 +69,8 @@ public class TargetChallengeManager {
     }
 
     /**
-     * Deactivates the Target Challenge.
+     * Deactivates Target Challenge mode and clears all state.
+     * Resets target positions, mission selection, and completion flag.
      */
     public void deactivate() {
         active = false;
@@ -77,11 +88,12 @@ public class TargetChallengeManager {
     }
 
     /**
-     * Generates the initial pattern on the board based on mission type.
+     * Generates the initial block pattern on the board based on current mission type.
+     * Fills board cells with target blocks and records their positions.
      *
-     * @param board The game board matrix
-     * @param width Board width
-     * @param height Board height
+     * @param board The game board 2D array to fill with pattern
+     * @param width Board height (number of rows)
+     * @param height Board width (number of columns)
      */
     public void generatePattern(int[][] board, int width, int height) {
         targetBlockPositions.clear();
@@ -96,8 +108,13 @@ public class TargetChallengeManager {
     }
 
     /**
-     * Generates a tower pattern in the middle of the board.
-     * Smaller tower - only 3 rows high for easier gameplay.
+     * Generates a vertical tower pattern in the center columns.
+     * Creates a 3-row tall, 3-block wide tower near the bottom of the board.
+     * Uses color code 7 for target blocks.
+     *
+     * @param board The game board 2D array
+     * @param width Board height (number of rows)
+     * @param height Board width (number of columns)
      */
     private void generateTowerPattern(int[][] board, int width, int height) {
         int centerX = height / 2;
@@ -117,6 +134,12 @@ public class TargetChallengeManager {
 
     /**
      * Generates a frame pattern around the edges of the board.
+     * Creates a border of blocks around the perimeter in the lower section.
+     * Uses color code 7 for target blocks.
+     *
+     * @param board The game board 2D array
+     * @param width Board height (number of rows)
+     * @param height Board width (number of columns)
      */
     private void generateFramePattern(int[][] board, int width, int height) {
         int frameThickness = 2;
@@ -135,7 +158,13 @@ public class TargetChallengeManager {
     }
 
     /**
-     * Generates a checkerboard pattern.
+     * Generates a checkerboard pattern of alternating filled cells.
+     * Fills cells where (x + y) is even in the bottom 10 rows.
+     * Uses color code 7 for target blocks.
+     *
+     * @param board The game board 2D array
+     * @param width Board height (number of rows)
+     * @param height Board width (number of columns)
      */
     private void generateCheckerboardPattern(int[][] board, int width, int height) {
         int startY = width - 10; // Bottom 10 rows
@@ -152,9 +181,10 @@ public class TargetChallengeManager {
     }
 
     /**
-     * Updates the timer and checks for timeout.
+     * Updates the elapsed time and checks for timeout condition.
+     * Calculates seconds elapsed since mission start.
      *
-     * @return true if time has run out
+     * @return true if time limit (180 seconds) has been reached, false otherwise
      */
     public boolean updateTimer() {
         if (!active) return false;
