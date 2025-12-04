@@ -39,6 +39,18 @@ import javafx.scene.layout.HBox;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+
+
+/**
+ * Main GUI controller managing all visual elements and user input for the game.
+ * Handles rendering of game board, bricks, ghost pieces, lava effects, and UI overlays.
+ * Coordinates with GameController for game logic and manages JavaFX components.
+ * This is the largest controller class (600+ lines) integrating all visual features.
+ *
+ * @author Tooba Nauman
+ * @version 1.0
+ * @since 2025
+ */
 public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
@@ -107,7 +119,15 @@ public class GuiController implements Initializable {
     private boolean isTargetChallengeMode = false;
 
 
-
+    /**
+     * Initializes the GUI controller and sets up all JavaFX components.
+     * Loads custom fonts, initializes sound system, creates pause menu and notification overlays,
+     * and sets up keyboard event handlers for game controls.
+     * Called automatically by JavaFX framework when FXML is loaded.
+     *
+     * @param location URL location used to resolve relative paths (unused)
+     * @param resources ResourceBundle for localization (unused)
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
@@ -197,7 +217,13 @@ public class GuiController implements Initializable {
         reflection.setTopOffset(-12);
     }
 
-
+    /**
+     * Sets the stage and menu controller references for scene navigation.
+     * Must be called after initialization to enable menu transitions.
+     *
+     * @param stage The primary stage for the application
+     * @param menuController The menu controller for returning to main menu
+     */
     //menu
     public void setStageAndMenu(Stage stage, MenuController menuController) {
         this.stage = stage;
@@ -205,6 +231,14 @@ public class GuiController implements Initializable {
     }
 
 
+    /**
+     * Initializes the game view with board matrix and initial brick data.
+     * Creates all rectangle elements for board display, brick rendering, and ghost preview.
+     * Sets up timers for automatic brick falling and starts background music.
+     *
+     * @param boardMatrix The initial game board state (2D array)
+     * @param brick Initial ViewData containing brick and display information
+     */
     public void initGameView(int[][] boardMatrix, ViewData brick) {
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
         for (int i = 2; i < boardMatrix.length; i++) {
@@ -273,13 +307,24 @@ public class GuiController implements Initializable {
         gameTimer.start();
     }
 
-
+    /**
+     * Maps color code to JavaFX Color using ColorMapper utility.
+     *
+     * @param i Color code integer (0-7 for bricks, 8-11 for special blocks)
+     * @return JavaFX Paint object representing the color
+     */
     //calling the new method created for the colorMapper instead of switch method
     private Paint getFillColor(int i) {
         return ColorMapper.getColor(i);
     }
 
-
+    /**
+     * Updates brick panel position and appearance based on current view data.
+     * Also updates ghost brick position and visibility if ghost preview is enabled.
+     * Called whenever brick moves, rotates, or when view needs refreshing.
+     *
+     * @param brick ViewData containing current brick position, shape, and ghost position
+     */
     private void refreshBrick(ViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
             brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
@@ -316,6 +361,13 @@ public class GuiController implements Initializable {
     }
 
 
+    /**
+     * Refreshes the game board background display.
+     * Updates all rectangle colors based on current board matrix state.
+     * Called after bricks are merged to background or lines are cleared.
+     *
+     * @param board Current game board matrix (2D array)
+     */
     public void refreshGameBackground(int[][] board) {
         for (int i = 2; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
@@ -328,9 +380,11 @@ public class GuiController implements Initializable {
 
 
     /**
-     * Updates lava rendering on the board.
+     * Updates the visual rendering of lava on the game board.
+     * Clears previous lava rendering and fills current lava rows with bright orange color.
+     * Only renders lava rows that are currently active based on LavaManager state.
      *
-     * @param lavaRows Array of rows occupied by lava
+     * @param lavaRows Array of row indices currently occupied by lava
      */
     public void updateLavaDisplay(int[] lavaRows) {
         // First, clear any previous lava rendering from all rows
@@ -358,9 +412,10 @@ public class GuiController implements Initializable {
     }
 
     /**
-     * Sets the background color for lava mode.
+     * Sets the background tint for lava mode.
+     * Applies subtle dark red tint when lava is active for atmospheric effect.
      *
-     * @param lavaActive true if lava mode is active
+     * @param lavaActive true to apply lava background, false for normal background
      */
     public void setLavaBackground(boolean lavaActive) {
         this.isLavaMode = lavaActive;
@@ -374,12 +429,15 @@ public class GuiController implements Initializable {
         }
     }
 
+
     /**
-     * Updates the Target Challenge UI display.
+     * Updates the Target Challenge UI display with mission information.
+     * Shows mission name, remaining target blocks, and countdown timer.
+     * Starts animation timer for real-time timer updates if not already running.
      *
-     * @param remainingBlocks Number of target blocks remaining
+     * @param remainingBlocks Number of target blocks still to be cleared
      * @param formattedTime Time remaining in MM:SS format
-     * @param mission Current mission type
+     * @param mission Current mission type being played
      */
     public void updateTargetChallengeDisplay(int remainingBlocks, String formattedTime,
                                              com.comp2042.model.game.TargetChallengeManager.MissionType mission) {
@@ -421,10 +479,9 @@ public class GuiController implements Initializable {
         }
     }
 
-
-
     /**
-     * Starts the timer update loop for Target Challenge.
+     * Starts the animation timer for Target Challenge countdown display.
+     * Updates timer label every second with current remaining time.
      */
     private void startTargetChallengeTimer() {
         targetChallengeTimer = new AnimationTimer() {
@@ -451,12 +508,23 @@ public class GuiController implements Initializable {
     }
 
 
-
+    /**
+     * Applies styling to a rectangle using RectangleRenderer utility.
+     *
+     * @param color Color code to apply
+     * @param rectangle Rectangle shape to style
+     */
     //calling the method for rectangle rendering as its own class
     private void setRectangleData(int color, Rectangle rectangle) {
         RectangleRenderer.styleRectangle(rectangle, color);
     }
 
+    /**
+     * Processes downward movement event and updates display accordingly.
+     * Handles line clear notifications and score animations.
+     *
+     * @param event The move event containing event type and source
+     */
     private void moveDown(MoveEvent event) {
         if (isPause.getValue() == Boolean.FALSE) {
             DownData downData = eventListener.onDownEvent(event);
@@ -471,11 +539,21 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
+    /**
+     * Sets the input event listener for game control callbacks.
+     *
+     * @param eventListener The InputEventListener implementation (typically GameController)
+     */
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
     }
 
-
+    /**
+     * Binds score label to score property for automatic updates.
+     * Uses JavaFX property binding to display score in real-time.
+     *
+     * @param integerProperty The IntegerProperty from Score model to bind
+     */
     //updated for displaying the score while playing the game.
     public void bindScore(IntegerProperty integerProperty) {
         if (scoreLabel != null) {
