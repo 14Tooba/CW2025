@@ -6,9 +6,18 @@ import com.comp2042.model.game.SimpleBoard;
 import com.comp2042.view.GuiController;
 import com.comp2042.view.LevelUpNotification;
 import javafx.stage.Stage; //added for menu screen
-import com.comp2042.model.game.TargetChallengeManager;
 
 
+
+/**
+ * Main game controller implementing input event handling and game flow.
+ * Coordinates between the game board model and GUI view components.
+ * Manages level progression, score updates, and game state transitions.
+ *
+ * @author Tooba Nauman
+ * @version 1.0
+ * @since 2025
+ */
 
 public class GameController implements InputEventListener {
 
@@ -22,6 +31,14 @@ public class GameController implements InputEventListener {
 
     private LevelUpNotification levelUpNotification;
 
+    /**
+     * Constructs a GameController with specified view, stage, and menu controller.
+     * Initializes the game board, creates first brick, and sets up view bindings.
+     *
+     * @param c The GUI controller for view management
+     * @param stage The primary stage for scene transitions
+     * @param menuController The menu controller for navigation back to menu
+     */
 
     public GameController(GuiController c, Stage stage, MenuController menuController) {
         this.stage = stage;
@@ -34,7 +51,14 @@ public class GameController implements InputEventListener {
         viewGuiController.bindScore(board.getScore().scoreProperty());
     }
 
-
+    /**
+     * Handles downward movement events for the current brick.
+     * Processes brick landing, line clearing, level progression checks,
+     * and game over conditions for all game modes.
+     *
+     * @param event The move event containing event type and source
+     * @return DownData containing clear row information and updated view data
+     */
         //Edited the onDownEvent
         @Override
         public DownData onDownEvent(MoveEvent event) {
@@ -92,29 +116,62 @@ public class GameController implements InputEventListener {
             return new DownData(clearRow, board.getViewData());
         }
 
+
+
+
+    /**
+     * Retrieves the current game board instance.
+     *
+     * @return The active Board instance
+     */
+
     public Board getBoard() {
         return board;
     }
 
+    /**
+     * Handles left movement events for the current brick.
+     *
+     * @param event The move event containing event type and source
+     * @return ViewData containing updated brick and ghost positions
+     */
     @Override
     public ViewData onLeftEvent(MoveEvent event) {
         board.moveBrickLeft();
         return board.getViewData();
     }
 
+
+    /**
+     * Handles right movement events for the current brick.
+     *
+     * @param event The move event containing event type and source
+     * @return ViewData containing updated brick and ghost positions
+     */
     @Override
     public ViewData onRightEvent(MoveEvent event) {
         board.moveBrickRight();
         return board.getViewData();
     }
 
+
+    /**
+     * Handles rotation events for the current brick.
+     * Attempts to rotate brick left with wall kick support.
+     *
+     * @param event The move event containing event type and source
+     * @return ViewData containing updated brick and ghost positions
+     */
     @Override
     public ViewData onRotateEvent(MoveEvent event) {
         board.rotateLeftBrick();
         return board.getViewData();
     }
 
-
+    /**
+     * Resets the game to initial state with a fresh board.
+     * Clears all blocks and refreshes the game background display.
+     */
     @Override
     public void createNewGame() {
         board.newGame();

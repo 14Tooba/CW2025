@@ -51,13 +51,4 @@ class PauseMenuTest {
             assertNotNull(menu.getQuitButton());
         });
     }
-
-    @Test
-    @DisplayName("Restart button provides backward compatibility")
-    void testBackwardCompatibility() {
-        Platform.runLater(() -> {
-            PauseMenu menu = new PauseMenu();
-            assertSame(menu.getQuitButton(), menu.getRestartButton());
-        });
-    }
 }

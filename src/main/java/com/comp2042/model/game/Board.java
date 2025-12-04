@@ -30,6 +30,7 @@ public interface Board {
 
     void newGame();
 
+
     GameLevel getCurrentLevel();
     LavaManager getLavaManager();
     boolean shouldLevelUp();
