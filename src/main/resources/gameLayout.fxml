@@ -11,7 +11,8 @@
       style="-fx-background-color: #1a1a1a; -fx-padding: 20;">
 
     <!-- Left Panel for Score and Info - Adjusted width and padding -->
-    <VBox alignment="TOP_CENTER" spacing="30" minWidth="120" prefWidth="120">
+    <VBox alignment="TOP_CENTER" spacing="30" minWidth="120" prefWidth="120" maxWidth="120"
+          style="-fx-background-color: transparent;">
 
         <!-- Empty space at top to push score down -->
         <Region minHeight="50"/>
