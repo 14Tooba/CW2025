@@ -3,7 +3,12 @@ package com.comp2042.view;
 import javafx.scene.shape.Rectangle;
 
 /**
- * Helper class for rendering game rectangles.
+ * Utility class for styling game board rectangle cells.
+ * Applies colors, opacity, and rounded corners based on block type.
+ *
+ * @author Tooba Nauman
+ * @version 1.0
+ * @since 2025
  */
 public final class RectangleRenderer {
 

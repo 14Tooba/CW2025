@@ -6,7 +6,13 @@ import javafx.scene.layout.VBox;
 import javafx.geometry.Pos;
 
 /**
- * Enhanced pause menu with resume and quit functionality.
+ * In-game pause menu overlay with resume and quit options.
+ * Displays as a semi-transparent centered panel during gameplay pause.
+ * Provides visual feedback through styled buttons.
+ *
+ * @author Tooba Nauman
+ * @version 1.0
+ * @since 2025
  */
 public class PauseMenu extends VBox {
 
@@ -51,9 +57,10 @@ public class PauseMenu extends VBox {
     }
 
     /**
-     * Styles a button with hover effects.
-     * @param button Button to style
-     * @param color Base color
+     * Applies consistent styling to menu buttons including hover effects.
+     *
+     * @param button The button to style
+     * @param color Base color for the button
      */
     private void styleButton(Button button, String color) {
         button.setPrefWidth(150);

@@ -5,7 +5,13 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * Simple sound manager using Java's built-in audio support.
+ * Audio manager using Java's built-in sound API for game sound effects.
+ * Handles background music playback with loop, volume, and mute controls.
+ * Supports WAV audio format only.
+ *
+ * @author Tooba Nauman
+ * @version 1.0
+ * @since 2025
  */
 public class SoundManager {
 
@@ -14,15 +20,17 @@ public class SoundManager {
     private boolean soundEnabled = true;
     private float volume = 0.5f; // 50% volume
 
+
     /**
-     * Constructor
+     * Initializes sound manager and loads background music.
      */
     public SoundManager() {
         loadBackgroundMusic();
     }
 
     /**
-     * Loads background music using javax.sound
+     * Loads background music WAV file and sets up looping playback.
+     * Applies volume control and prepares clip for continuous loop.
      */
     private void loadBackgroundMusic() {
         try {
@@ -50,7 +58,7 @@ public class SoundManager {
     }
 
     /**
-     * Starts playing background music
+     * Starts playing background music in continuous loop if enabled.
      */
     public void startBackgroundMusic() {
         if (backgroundMusicClip != null && musicEnabled) {

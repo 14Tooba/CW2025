@@ -7,14 +7,21 @@ import javafx.geometry.Pos;
 import java.util.List;
 
 /**
- * Displays high scores screen.
+ * High scores display screen showing top player scores.
+ * Lists scores in descending order with special styling for top score.
+ * Provides navigation back to main menu.
+ *
+ * @author Tooba Nauman
+ * @version 1.0
+ * @since 2025
  */
 public class HighScoreScreen extends VBox {
     private HighScoreManager scoreManager;
     private Button backButton;
 
     /**
-     * Creates high score display.
+     * Constructs high score screen and loads scores from manager.
+     * Displays top score prominently with gold styling.
      */
     public HighScoreScreen() {
         scoreManager = new HighScoreManager();
