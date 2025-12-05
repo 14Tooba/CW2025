@@ -8,7 +8,13 @@ import javafx.scene.layout.StackPane;
 
 
 /**
- * Main menu screen for Tetris game.
+ * Main menu screen providing navigation options for the Tetris game.
+ * Features styled buttons for starting game, viewing high scores, and quitting.
+ * Includes game controls information and visual effects.
+ *
+ * @author Tooba Nauman
+ * @version 1.0
+ * @since 2025
  */
 public class MainMenu extends StackPane {
 
@@ -73,6 +79,15 @@ public class MainMenu extends StackPane {
         getChildren().add(menuContainer);
     }
 
+
+    /**
+     * Creates a styled button with hover effects.
+     *
+     * @param text Button label text
+     * @param color Base background color
+     * @param hoverColor Color when mouse hovers over button
+     * @return Configured Button instance
+     */
     private Button createButton(String text, String color, String hoverColor) {
         Button button = new Button(text);
         button.setPrefWidth(280);

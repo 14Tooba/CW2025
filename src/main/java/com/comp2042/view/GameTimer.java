@@ -8,8 +8,12 @@ import javafx.animation.Timeline;
 import javafx.util.Duration;
 
 /**
- * Manages the game timer for automatic brick falling.
- * Extracted from GuiController to follow Single Responsibility Principle.
+ * Game timer for automatic brick falling at regular intervals.
+ * Manages timeline for gravity-based piece descent with pause/resume support.
+ *
+ * @author Tooba Nauman
+ * @version 1.0
+ * @since 2025
  */
 public class GameTimer {
 

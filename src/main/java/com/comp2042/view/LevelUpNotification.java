@@ -8,9 +8,13 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 
 /**
- * Epic level up notification with special styling for lava mode.
- * author @Tooba
+ * Full-screen level advancement notification with themed visuals.
+ * Displays different styles for Classic, Lava, and Target Challenge modes.
+ * Features dramatic effects including glows, gradients, and mission details.
  *
+ * @author Tooba Nauman
+ * @version 1.0
+ * @since 2025
  */
 public class LevelUpNotification extends StackPane {
 
@@ -44,7 +48,8 @@ public class LevelUpNotification extends StackPane {
     }
 
     /**
-     * Creates epic lava-themed notification with subtle fire effects.
+     * Creates a themed level-up notification based on the level name.
+     * Automatically detects Lava or Target Challenge modes for special styling.
      */
     private void createLavaNotification() {
         // Dramatic dark background

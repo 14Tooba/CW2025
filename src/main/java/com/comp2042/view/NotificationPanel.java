@@ -14,6 +14,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
+
+/**
+ * Animated notification panel for displaying score bonuses and achievements.
+ * Features fade-out and slide-up animations with glow effects.
+ *
+ * @author Tooba Nauman
+ * @version 1.0
+ * @since 2025
+ */
 public class NotificationPanel extends BorderPane {
 
     public NotificationPanel(String text) {
@@ -28,6 +37,11 @@ public class NotificationPanel extends BorderPane {
 
     }
 
+    /**
+     * Displays notification with animation and auto-removes after completion.
+     *
+     * @param list Observable list to remove notification from after animation
+     */
     public void showScore(ObservableList<Node> list) {
         FadeTransition ft = new FadeTransition(Duration.millis(2000), this);
         TranslateTransition tt = new TranslateTransition(Duration.millis(2500), this);
