@@ -41,26 +41,52 @@ import java.util.ResourceBundle;
  * @author Tooba Nauman
  * @version 2.0
  * @since 2025
+ *  @see BrickRenderer
+ *  @see GameBoardRenderer
+ *  @see LavaDisplayManager
+ *  @see TargetChallengeUI
+ *  @see GameInputHandler
  */
 public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
 
+    /**
+     * Main game panel GridPane for displaying the board background.
+     * Injected from FXML layout file.
+     */
     @FXML
     private GridPane gamePanel;
 
+    /**
+     * Container group for displaying floating notifications.
+     * Holds score bonus notifications and other temporary messages.
+     */
     @FXML
     private Group groupNotification;
 
     @FXML
     private GridPane brickPanel;
 
+    /**
+     * Game over overlay panel displayed when game ends.
+     * Shows "GAME OVER" message and transitions back to menu.
+     */
     @FXML
     private GameOverPanel gameOverPanel;
 
+    /**
+     * Label displaying the current score.
+     * Bound to Score model's scoreProperty for automatic updates.
+     */
     @FXML
     private Label scoreLabel;
 
+    /**
+     * Container for Target Challenge mode UI elements.
+     * Shows mission name, remaining blocks, and countdown timer.
+     * Visible only during Target Challenge level (Level 3).
+     */
     @FXML
     private VBox targetChallengeContainer;
 
@@ -74,10 +100,34 @@ public class GuiController implements Initializable {
     private Label timerLabel;
 
     // Specialized components
+    /**
+     * Manages rendering and updates of the static game board background.
+     * Handles the display matrix of rectangles representing placed blocks.
+     */
     private GameBoardRenderer boardRenderer;
+
+    /**
+     * Manages rendering of the current brick and ghost piece.
+     * Handles position updates, opacity, and ghost piece toggle.
+     */
     private BrickRenderer brickRenderer;
+
+    /**
+     * Manages visual display of lava in Lava Survival mode (Level 2).
+     * Controls lava row rendering and background atmosphere effects.
+     */
     private LavaDisplayManager lavaDisplayManager;
+
+    /**
+     * Manages UI display for Target Challenge mode (Level 3).
+     * Handles mission info, block counter, and countdown timer updates.
+     */
     private TargetChallengeUI targetChallengeUI;
+
+    /**
+     * Centralized keyboard input processor for gameplay controls.
+     * Handles movement (arrow keys/WASD), rotation, ghost toggle, pause, and new game.
+     */
     private GameInputHandler inputHandler;
 
     // Game state
@@ -95,6 +145,16 @@ public class GuiController implements Initializable {
     private MenuController menuController;
     private HighScoreManager highScoreManager = new HighScoreManager();
 
+
+
+    /**
+     * Initializes the GUI controller when FXML is loaded.
+     * Sets up fonts, audio, pause menu, level-up notification, and Target Challenge UI.
+     * Configures initial visibility states and event handlers.
+     *
+     * @param location The location used to resolve relative paths for the root object, or null
+     * @param resources The resources used to localize the root object, or null
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
@@ -132,11 +192,26 @@ public class GuiController implements Initializable {
         gameOverPanel.setVisible(false);
     }
 
+    /**
+     * Sets the primary stage and menu controller references.
+     * Must be called after FXML loading to enable scene transitions.
+     *
+     * @param stage The primary application stage
+     * @param menuController The menu controller for navigation
+     */
     public void setStageAndMenu(Stage stage, MenuController menuController) {
         this.stage = stage;
         this.menuController = menuController;
     }
 
+    /**
+     * Initializes the game view with board matrix and brick data.
+     * Creates specialized rendering managers, sets up timelines, and configures keyboard input.
+     * Called once when game starts from GameController constructor.
+     *
+     * @param boardMatrix The initial 2D game board matrix
+     * @param brick The initial brick view data with position and shape
+     */
     public void initGameView(int[][] boardMatrix, ViewData brick) {
         boardRenderer = new GameBoardRenderer(gamePanel);
         boardRenderer.initializeBoard(boardMatrix);
@@ -171,6 +246,13 @@ public class GuiController implements Initializable {
         gameTimer.start();
     }
 
+    /**
+     * Handles automatic or user-triggered downward brick movement.
+     * Processes line clears, score updates, and brick rendering.
+     * Displays score bonus notifications for cleared lines.
+     *
+     * @param event The move event (USER-triggered or THREAD-triggered)
+     */
     private void moveDown(MoveEvent event) {
         if (!isPause.getValue()) {
             DownData downData = eventListener.onDownEvent(event);
@@ -189,6 +271,12 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
+    /**
+     * Registers the input event listener (typically GameController).
+     * Sets up keyboard input handling and Target Challenge UI controller reference.
+     *
+     * @param eventListener The listener implementing input event callbacks
+     */
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
 
@@ -223,6 +311,11 @@ public class GuiController implements Initializable {
         });
     }
 
+    /**
+     * Executes hard drop - instantly moves brick to ghost piece position.
+     * Keeps moving down until reaching the calculated landing position.
+     * Plays drop sound effect on completion.
+     */
     private void hardDrop() {
         // Get current view data to find ghost position
         ViewData currentView = eventListener.onDownEvent(
@@ -264,6 +357,10 @@ public class GuiController implements Initializable {
         brickRenderer.refreshBrick(result);
     }
 
+    /**
+     * Handles rotation input callback from GameInputHandler.
+     * Rotates brick counter-clockwise, plays sound, and updates display.
+     */
     public void handleRotate() {
         ViewData result = eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER));
         soundManager.playRotate();
@@ -288,19 +385,44 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Refreshes the game board background with current matrix state.
+     * Updates all rectangle colors based on board matrix values.
+     *
+     * @param board The current 2D game board matrix
+     */
     public void refreshGameBackground(int[][] board) {
         boardRenderer.refreshGameBackground(board);
     }
 
+    /**
+     * Updates lava visual display for Lava Survival mode (Level 2).
+     * Renders lava rows with bright orange color and proper effects.
+     *
+     * @param lavaRows Array of row indices currently occupied by lava
+     */
     public void updateLavaDisplay(int[] lavaRows) {
         lavaDisplayManager.updateLavaDisplay(lavaRows);
     }
 
+    /**
+     * Updates Target Challenge display elements (Level 3).
+     * Shows mission name, remaining blocks, and formatted time.
+     *
+     * @param remainingBlocks Number of target blocks still to clear
+     * @param formattedTime Time remaining in MM:SS format
+     * @param mission Current mission type (Tower, Frame, or Checkerboard)
+     */
     public void updateTargetChallengeDisplay(int remainingBlocks, String formattedTime,
                                              com.comp2042.model.game.TargetChallengeManager.MissionType mission) {
         targetChallengeUI.updateDisplay(remainingBlocks, formattedTime, mission);
     }
 
+    /**
+     * Triggers game over sequence.
+     * Stops timers, plays game over sound, displays game over panel,
+     * and transitions back to menu after 3 seconds.
+     */
     public void gameOver() {
         soundManager.playGameOver();
         soundManager.stopBackgroundMusic();
@@ -322,6 +444,12 @@ public class GuiController implements Initializable {
         pause.play();
     }
 
+    /**
+     * Starts a new game session.
+     * Resets board, restarts timers, and clears game over state.
+     *
+     * @param actionEvent The action event (can be null when called programmatically)
+     */
     public void newGame(ActionEvent actionEvent) {
         timeLine.stop();
         if (gameTimer != null) {
@@ -349,6 +477,13 @@ public class GuiController implements Initializable {
         soundManager.startBackgroundMusic();
     }
 
+    /**
+     * Displays full-screen level-up notification with themed visuals.
+     * Pauses game for 5 seconds while showing notification.
+     * Updates lava background and Target Challenge UI visibility based on level.
+     *
+     * @param levelName The display name of the next level
+     */
     public void showLevelUp(String levelName) {
         timeLine.pause();
         if (gameTimer != null) {
@@ -427,6 +562,12 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Placeholder pause action handler (currently unused).
+     * Focus management is handled through direct method calls.
+     *
+     * @param actionEvent The action event from pause button
+     */
     public void pauseGame(ActionEvent actionEvent) {
         gamePanel.requestFocus();
     }
