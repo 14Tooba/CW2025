@@ -1,10 +1,12 @@
-package com.comp2042.view;
+package com.comp2042.view.GUI;
 
+import com.comp2042.view.ColorMapper;
+import com.comp2042.view.RectangleRenderer;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
-import com.comp2042.ViewData;
+import com.comp2042.Data.ViewData;
 import com.comp2042.constants.GameConstants;
 import java.awt.Point;
 

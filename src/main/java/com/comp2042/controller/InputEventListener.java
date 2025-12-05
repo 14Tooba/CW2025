@@ -1,8 +1,8 @@
 package com.comp2042.controller;
 
-import com.comp2042.DownData;
+import com.comp2042.Data.DownData;
 import com.comp2042.MoveEvent;
-import com.comp2042.ViewData;
+import com.comp2042.Data.ViewData;
 import com.comp2042.model.game.Board;
 
 /**

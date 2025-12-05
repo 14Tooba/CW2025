@@ -1,9 +1,11 @@
 package com.comp2042.controller;
 
 import com.comp2042.*;
+import com.comp2042.Data.DownData;
+import com.comp2042.Data.ViewData;
 import com.comp2042.model.game.Board;
 import com.comp2042.model.game.SimpleBoard;
-import com.comp2042.view.GuiController;
+import com.comp2042.view.GUI.GuiController;
 import com.comp2042.view.LevelUpNotification;
 import javafx.stage.Stage; //added for menu screen
 

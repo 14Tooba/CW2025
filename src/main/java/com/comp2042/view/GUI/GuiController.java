@@ -1,9 +1,12 @@
-package com.comp2042.view;
+package com.comp2042.view.GUI;
 
 import com.comp2042.*;
+import com.comp2042.Data.DownData;
+import com.comp2042.Data.ViewData;
 import com.comp2042.controller.GameController;
 import com.comp2042.controller.InputEventListener;
 import com.comp2042.model.scoring.HighScoreManager;
+import com.comp2042.view.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
@@ -17,7 +20,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
