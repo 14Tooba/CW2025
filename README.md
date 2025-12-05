@@ -11,8 +11,9 @@
 5. [Features Not Implemented](#features-not-implemented)
 6. [New Java Classes](#new-java-classes)
 7. [Modified Java Classes](#modified-java-classes)
-8. [Unexpected Problems](#unexpected-problems)
-9. [GitHub Repository Suspicious Activity](#github-repository-suspicious-activity)
+8. [Package Structure Evolution](package-structure-evolution)
+9. [Unexpected Problems](#unexpected-problems)
+10. [GitHub Repository Suspicious Activity](#github-repository-suspicious-activity)
 
 ---
 
@@ -1084,7 +1085,82 @@ A comprehensive editor allowing players to create custom levels and challenges.
   - Ghost blocks (12): Semi-transparent
 - **Design:** Centralized color management
 
-#### 22. **RectangleRenderer** (`/view/RectangleRenderer.java`)
+  #### 22. **BrickRenderer** (`/view/GUI/BrickRenderer.java`)
+- **Purpose:** Manages rendering of current and ghost bricks on the game board
+- **Key Responsibilities:**
+  - Current brick display management
+  - Ghost brick visualization with transparency
+  - Real-time position updates during gameplay
+  - Toggle functionality for ghost piece visibility
+- **Visual Features:**
+  - Full opacity (1.0) for active bricks
+  - Semi-transparent (0.4 opacity) for ghost pieces
+  - Proper layering with ghost behind current brick
+  - Dynamic rectangle initialization and styling
+- **Integration:** Works with GuiController and RectangleRenderer for cohesive display
+- **Ghost Toggle:** 'G' key toggles ghost visibility on/off
+
+#### 23. **GameBoardRenderer** (`/view/GUI/GameBoardRenderer.java`)
+- **Purpose:** Handles rendering and updating the game board background
+- **Key Responsibilities:**
+  - Display matrix initialization for all board cells
+  - Background refresh based on current board state
+  - Rectangle styling and color application
+  - Hides top 2 spawn rows from display
+- **Technical Details:**
+  - Creates Rectangle grid starting from row 2
+  - Uses RectangleRenderer for consistent styling
+  - Maintains 2D array of Rectangle objects
+  - Updates colors dynamically during gameplay
+- **Design Pattern:** Follows Single Responsibility Principle
+
+#### 24. **GameInputHandler** (`/view/GUI/GameInputHandler.java`)
+- **Purpose:** Centralized keyboard input processing for gameplay controls
+- **Key Controls Handled:**
+  - Arrow Keys and WASD: Movement (left, right, rotate)
+  - G: Toggle ghost piece visibility
+  - N: New game
+  - P/ESC: Pause/unpause
+- **State Management:**
+  - Respects pause state (blocks gameplay input when paused)
+  - Respects game over state
+  - Allows global inputs (pause, new game) regardless of state
+- **Design:** Implements EventHandler<KeyEvent> for clean event processing
+- **Note:** DOWN and SPACE keys handled separately in GuiController for soft/hard drop
+
+#### 25. **LavaDisplayManager** (`/view/GUI/LavaDisplayManager.java`)
+- **Purpose:** Manages all visual aspects of lava in Lava Survival mode
+- **Lava Rendering:**
+  - Bright orange (RGB 255, 69, 0) for active lava rows
+  - Clears previous lava positions before updating
+  - Fills all rows from top to current lava position
+  - Rounded corners (arc height/width: 9) for aesthetic appeal
+- **Atmospheric Effects:**
+  - Dark red background tint during lava mode
+  - Transparent background for other modes
+  - Dynamic background switching on level transitions
+- **Performance:** Efficient rendering with minimal overdraw
+- **Integration:** Works with GameBoardRenderer's display matrix
+
+#### 26. **TargetChallengeUI** (`/view/GUI/TargetChallengeUI.java`)
+- **Purpose:** Manages UI display for Target Challenge mode (Level 3)
+- **Display Elements:**
+  - Mission name label (Tower/Frame/Checkerboard)
+  - Remaining target blocks counter
+  - Countdown timer in MM:SS format
+  - Container visibility management
+- **Animation Timer:**
+  - Real-time countdown updates every second
+  - Automatic synchronization with game state
+  - Efficient 1-second interval checking
+- **Lifecycle:**
+  - Shows on Target Challenge level activation
+  - Hides during other game modes
+  - Proper cleanup when deactivated
+- **Integration:** References GameController for live data updates
+Then renumber all 
+
+#### 27. **RectangleRenderer** (`/view/RectangleRenderer.java`)
 - **Purpose:** Creates styled rectangles for blocks
 - **Enhancements:**
   - Border effects
@@ -1095,7 +1171,7 @@ A comprehensive editor allowing players to create custom levels and challenges.
 
 ### Utils Package (`com.comp2042.utils`)
 
-#### 23. **MatrixOperations** (`/utils/MatrixOperations.java`)
+#### 28. **MatrixOperations** (`/utils/MatrixOperations.java`)
 - **Purpose:** Matrix manipulation utilities
 - **Operations:**
   - Copy matrices
@@ -1104,7 +1180,7 @@ A comprehensive editor allowing players to create custom levels and challenges.
   - Boundary validation
 - **Moved from:** Root package with optimizations
 
-#### 24. **SoundManager** (`/utils/SoundManager.java`)
+#### 29. **SoundManager** (`/utils/SoundManager.java`)
 - **Purpose:** Centralized audio management
 - **Features:**
   - Background music control
@@ -1116,7 +1192,7 @@ A comprehensive editor allowing players to create custom levels and challenges.
 
 ### Constants Package (`com.comp2042.constants`)
 
-#### 25. **GameConstants** (`/constants/GameConstants.java`)
+#### 30. **GameConstants** (`/constants/GameConstants.java`)
 - **Purpose:** Centralized configuration values
 - **Categories:**
   - Board dimensions (WIDTH: 10, HEIGHT: 25)
@@ -1130,7 +1206,7 @@ A comprehensive editor allowing players to create custom levels and challenges.
 
 ### Logic Package (`com.comp2042.logic.bricks`)
 
-#### 26. **BrickFactory** (`/logic/bricks/BrickFactory.java`)
+#### 31. **BrickFactory** (`/logic/bricks/BrickFactory.java`)
 - **Purpose:** Factory pattern for brick creation
 - **Design Pattern:** Factory Method
 - **Benefits:**
@@ -1194,20 +1270,36 @@ A comprehensive editor allowing players to create custom levels and challenges.
 - **Reason:** Support for multi-level gameplay
 - **Impact:** Richer game experience
 
-#### 5. **GuiController** (`/view/GuiController.java`)
-- **Original:** Basic UI management (~200 lines)
-- **Modifications (now 600+ lines):**
-  - Added ghost piece rendering system
-  - Lava display methods
-  - Target challenge UI elements
-  - Pause menu integration
-  - Sound manager initialization
-  - Timer display for challenges
-  - Level transition animations
+#### 5. **GuiController** (`/view/GUI/GuiController.java`)
+- **Original:** Monolithic controller handling all UI operations (~200 lines)
+- **Major Refactoring - Component Extraction:**
+  - **BrickRenderer:** Extracted brick and ghost piece rendering logic
+  - **GameBoardRenderer:** Separated board background display management
+  - **GameInputHandler:** Isolated keyboard input processing
+  - **LavaDisplayManager:** Moved lava-specific rendering to dedicated class
+  - **TargetChallengeUI:** Extracted Target Challenge UI management
+- **Current Responsibilities (600+ lines):**
+  - Orchestrates specialized UI component managers
+  - Manages game state (pause, game over)
+  - Handles FXML-injected elements (@FXML fields)
+  - Coordinates level transitions and notifications
+  - Manages sound system integration
+  - Scene and stage reference management
   - Score binding with properties
-  - Enhanced visual effects
-- **Reason:** Support all new visual features
-- **Impact:** Professional UI presentation
+  - Game timer lifecycle control
+  - Special input handling (DOWN for soft drop, SPACE for hard drop)
+- **Design Pattern Evolution:**
+  - Original: God Object anti-pattern
+  - Refactored: Delegation pattern with specialized managers
+  - Improved: Single Responsibility Principle compliance
+- **Benefits of Refactoring:**
+  - Better testability (each component testable independently)
+  - Improved maintainability (clear separation of concerns)
+  - Enhanced readability (smaller, focused classes)
+  - Easier debugging (isolated component logic)
+  - Scalability (can extend individual components)
+- **Reason:** Followed software engineering best practices to reduce complexity
+- **Impact:** More robust, maintainable codebase with professional architecture
 
 ### Data Model Classes
 
@@ -1368,6 +1460,95 @@ A comprehensive editor allowing players to create custom levels and challenges.
 - **Impact:** Modern visual design
 
 ---
+## Package Structure Evolution
+
+### Overview
+The project underwent significant architectural improvements through package reorganization and the introduction of specialized sub-packages. This restructuring enhances maintainability, scalability, and adherence to software engineering principles.
+
+### New Sub-Package: `view.GUI`
+
+#### Purpose
+Dedicated package for GUI component classes, separating view logic into manageable, specialized units.
+
+#### Location
+`src/main/java/com/comp2042/view/GUI/`
+
+#### Contents
+Five specialized GUI component classes extracted from the monolithic GuiController:
+
+1. **BrickRenderer.java** - Brick and ghost piece rendering
+2. **GameBoardRenderer.java** - Board background display management
+3. **GameInputHandler.java** - Keyboard input processing
+4. **LavaDisplayManager.java** - Lava mode visual effects
+5. **TargetChallengeUI.java** - Target Challenge mode UI
+6. **GuiController.java** - Main orchestrator for GUI components
+
+#### Design Rationale
+- **Separation of Concerns:** Each class handles a single aspect of UI rendering
+- **Single Responsibility Principle:** Classes have one reason to change
+- **Testability:** Individual components can be unit tested in isolation
+- **Maintainability:** Changes to one UI aspect don't affect others
+- **Scalability:** New UI features can be added as new classes without modifying existing ones
+
+#### Benefits Achieved
+- Reduced GuiController complexity from god object to coordinator
+- Clear component boundaries and responsibilities
+- Improved code navigation and understanding
+- Easier debugging with isolated component logic
+- Better collaboration potential (team members can work on separate components)
+
+### Package Organization Summary
+
+**Current Package Structure:**
+```
+com.comp2042
+├── controller/          (Game control logic)
+│   ├── GameController.java
+│   ├── InputEventListener.java
+│   └── MenuController.java
+├── model/              (Business logic and data)
+│   ├── game/          (Game state and mechanics)
+│   │   ├── Board.java
+│   │   ├── SimpleBoard.java
+│   │   ├── BrickRotator.java
+│   │   ├── GameLevel.java
+│   │   ├── GameState.java
+│   │   ├── GhostBrickCalculator.java
+│   │   ├── LavaManager.java
+│   │   └── TargetChallengeManager.java
+│   └── scoring/       (Scoring system)
+│       ├── Score.java
+│       └── HighScoreManager.java
+├── view/              (UI components)
+│   ├── GUI/          (NEW: Specialized GUI components)
+│   │   ├── BrickRenderer.java
+│   │   ├── GameBoardRenderer.java
+│   │   ├── GameInputHandler.java
+│   │   ├── GuiController.java
+│   │   ├── LavaDisplayManager.java
+│   │   └── TargetChallengeUI.java
+│   ├── ColorMapper.java
+│   ├── RectangleRenderer.java
+│   ├── MainMenu.java
+│   ├── PauseMenu.java
+│   ├── GameOverPanel.java
+│   ├── NotificationPanel.java
+│   ├── LevelUpNotification.java
+│   ├── GameTimer.java
+│   └── HighScoreScreen.java
+├── logic/             (Game mechanics)
+│   └── bricks/       (Brick implementations)
+│       ├── Brick.java
+│       ├── BrickFactory.java
+│       ├── BrickGenerator.java
+│       ├── RandomBrickGenerator.java
+│       └── [7 brick classes]
+├── utils/             (Utility classes)
+│   ├── MatrixOperations.java
+│   └── SoundManager.java
+└── constants/         (Configuration values)
+    └── GameConstants.java
+```
 
 ## Unexpected Problems
 
@@ -1596,12 +1777,12 @@ During the development period of this project, unusual activity was detected on 
 ## Project Statistics and Metrics
 
 ### Code Metrics
-- **Total Lines of Code:** ~8,000 lines
-- **Number of Classes:** 47 (26 new, 21 modified)
-- **Number of Packages:** 7 main packages
+- **Total Lines of Code:** ~9,500 lines (increased from ~8,000 due to refactoring expansion)
+- **Number of Classes:** 52 (26 new, 21 modified, 5 new specialized GUI components)
+- **Number of Packages:** 8 main packages (added view.GUI sub-package)
 - **Test Coverage:** 78% line coverage
 - **Number of Tests:** 11 test classes
-- **Comments and Documentation:** ~2,000 lines
+- **Comments and Documentation:** ~2,500 lines
 
 ### Development Timeline
 - **Project Duration:** 8 weeks
@@ -1626,6 +1807,13 @@ During the development period of this project, unusual activity was detected on 
 5. **Singleton Pattern:** SoundManager instance
 6. **Interface Segregation:** Board interface
 
+### Refactoring Achievements
+1. **Component Extraction Pattern:** Decomposed GuiController into 5 specialized classes
+2. **Delegation Pattern:** GuiController delegates to specialized managers
+3. **Package Organization:** Created view.GUI sub-package for UI components
+4. **Separation of Concerns:** Clear boundaries between rendering, input, and display logic
+
+   
 ### SOLID Principles
 - **Single Responsibility:** Each class has one purpose
 - **Open/Closed:** Extensible through interfaces
@@ -1656,6 +1844,9 @@ During the development period of this project, unusual activity was detected on 
 - Comprehensive JavaDoc comments
 - Meaningful variable names
 - Proper error handling
+- Modular architecture with specialized components
+- Refactored god objects into manageable classes
+- Package organization following best practices
 - No compiler warnings
 
 ### User Testing
