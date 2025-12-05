@@ -221,28 +221,34 @@ public class GuiController implements Initializable {
         });
     }
 
-    /**
-     * Hard drop - instantly drops brick to ghost position.
-     */
     private void hardDrop() {
-        // Keep moving down until brick can't move anymore
-        boolean moved = true;
-        while (moved) {
-            DownData downData = eventListener.onDownEvent(new MoveEvent(EventType.DOWN, EventSource.USER));
-            if (downData == null) {
-                moved = false;
-            } else {
-                brickRenderer.refreshBrick(downData.getViewData());
-                // Small delay to show the drop animation
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
+        // Get current view data to find ghost position
+        ViewData currentView = eventListener.onDownEvent(
+                new MoveEvent(EventType.DOWN, EventSource.USER)
+        ).getViewData();
+
+        if (currentView != null && currentView.getGhostPosition() != null) {
+            // Keep moving down until we reach ghost position
+            while (true) {
+                DownData downData = eventListener.onDownEvent(
+                        new MoveEvent(EventType.DOWN, EventSource.USER)
+                );
+
+                if (downData.getClearRow() != null) {
+                    // Brick has landed - line clear occurred
+                    brickRenderer.refreshBrick(downData.getViewData());
+                    break;
+                }
+
+                // Check if we can't move anymore
+                if (!eventListener.getBoard().moveBrickDown()) {
                     break;
                 }
             }
         }
+
         soundManager.playDrop();
+        gamePanel.requestFocus();
     }
 
     // Public methods for GameInputHandler callbacks
