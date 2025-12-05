@@ -1,4 +1,4 @@
-package com.comp2042.view;
+package com.comp2042.view.GUI;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;

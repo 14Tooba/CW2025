@@ -1,5 +1,6 @@
 package com.comp2042.controller;
 
+import com.comp2042.view.GUI.GuiController;
 import com.comp2042.view.MainMenu;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -58,7 +59,7 @@ public class MenuController {
                     getClass().getClassLoader().getResource("gameLayout.fxml")
             );
             javafx.scene.Parent root = loader.load();
-            com.comp2042.view.GuiController guiController = loader.getController();
+            GuiController guiController = loader.getController();
 
             Scene gameScene = new Scene(root, 300, 510);
             stage.setScene(gameScene);

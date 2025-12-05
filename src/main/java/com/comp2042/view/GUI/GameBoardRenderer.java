@@ -1,5 +1,6 @@
-package com.comp2042.view;
+package com.comp2042.view.GUI;
 
+import com.comp2042.view.RectangleRenderer;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Rectangle;
 import com.comp2042.constants.GameConstants;

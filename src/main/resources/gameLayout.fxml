@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import java.net.URL?>
 
-<HBox fx:controller="com.comp2042.view.GuiController"
+<HBox fx:controller="com.comp2042.view.GUI.GuiController"
       xmlns:fx="http://javafx.com/fxml"
       alignment="CENTER"
       spacing="15"

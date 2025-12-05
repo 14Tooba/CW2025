@@ -1,4 +1,4 @@
-package com.comp2042.view;
+package com.comp2042.view.GUI;
 
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
