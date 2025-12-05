@@ -5,6 +5,9 @@ import javafx.scene.paint.Color;
 /**
  * Maps color codes to vibrant JavaFX colors for game elements.
  * Provides bold, high-contrast colors for better visibility.
+ * @author Tooba Nauman
+ * @version 1.0
+ * @since 2025
  */
 public final class ColorMapper {
     private ColorMapper() {}
