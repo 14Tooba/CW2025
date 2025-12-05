@@ -38,6 +38,7 @@ public class BrickRenderer {
             for (int j = 0; j < brickData[i].length; j++) {
                 Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
                 rectangle.setFill(ColorMapper.getColor(brickData[i][j]));
+                rectangle.setOpacity(1.0);
                 rectangles[i][j] = rectangle;
                 brickPanel.add(rectangle, j, i);
             }
@@ -81,6 +82,7 @@ public class BrickRenderer {
         for (int i = 0; i < brick.getBrickData().length; i++) {
             for (int j = 0; j < brick.getBrickData()[i].length; j++) {
                 RectangleRenderer.styleRectangle(rectangles[i][j], brick.getBrickData()[i][j]);
+                rectangles[i][j].setOpacity(1.0);
             }
         }
 
