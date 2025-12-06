@@ -164,6 +164,7 @@ public class GuiController implements Initializable {
 
         pauseMenu = new PauseMenu();
         pauseMenu.setVisible(false);
+        pauseMenu.setManaged(false);  // This prevents layout space allocation
         pauseMenu.setTranslateX(20);
         pauseMenu.setTranslateY(120);
         gamePanel.getChildren().add(pauseMenu);
@@ -178,6 +179,8 @@ public class GuiController implements Initializable {
         levelUpNotification.setPrefSize(300, 510);
         levelUpNotification.setLayoutX(0);
         levelUpNotification.setLayoutY(0);
+        levelUpNotification.setVisible(false);
+        levelUpNotification.setManaged(false);  // This prevents layout space allocation
 
         targetChallengeUI = new TargetChallengeUI(
                 targetChallengeContainer,
@@ -190,6 +193,7 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
 
         gameOverPanel.setVisible(false);
+
     }
 
     /**
@@ -234,13 +238,46 @@ public class GuiController implements Initializable {
         timeLine.setCycleCount(Timeline.INDEFINITE);
         timeLine.play();
 
-        pauseMenu.setPrefWidth(300);
-        pauseMenu.setPrefHeight(510);
-        pauseMenu.setLayoutX(0);
-        pauseMenu.setLayoutY(0);
-        ((javafx.scene.layout.Pane) gamePanel.getParent()).getChildren().add(pauseMenu);
+        // Get the parent pane once
+        javafx.scene.layout.Pane parentPane = (javafx.scene.layout.Pane) gamePanel.getParent();
 
-        ((javafx.scene.layout.Pane) gamePanel.getParent()).getChildren().add(levelUpNotification);
+
+        // Remove any existing pause menu from scene graph
+        if (pauseMenu.getParent() != null) {
+            ((javafx.scene.layout.Pane) pauseMenu.getParent()).getChildren().remove(pauseMenu);
+        }
+
+        // Get the root HBox (the actual scene root)
+        HBox rootHBox = (HBox) gamePanel.getScene().getRoot();
+
+        // Create a container for the pause menu overlay
+        StackPane pauseOverlay = new StackPane();
+        pauseOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7);");
+        pauseOverlay.setAlignment(javafx.geometry.Pos.TOP_CENTER);
+        pauseMenu.setTranslateY(-10);  // Add some top padding
+        pauseOverlay.setVisible(false);
+        pauseOverlay.setManaged(false);
+
+
+        // Add pause menu to the overlay
+        pauseOverlay.getChildren().add(pauseMenu);
+        pauseMenu.setVisible(true); // Visible within its parent overlay
+        pauseMenu.setManaged(true);
+
+        // Add overlay to root
+        if (!rootHBox.getChildren().contains(pauseOverlay)) {
+            rootHBox.getChildren().add(pauseOverlay);
+        }
+
+        // Store reference to overlay for toggling
+        pauseMenu.setUserData(pauseOverlay); // Store overlay reference
+
+        // Add level up notification
+        levelUpNotification.setVisible(false);
+        levelUpNotification.setManaged(false);
+        if (!parentPane.getChildren().contains(levelUpNotification)) {
+            parentPane.getChildren().add(levelUpNotification);
+        }
 
         gameTimer = new GameTimer(400, () -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD)));
         gameTimer.start();
@@ -501,6 +538,8 @@ public class GuiController implements Initializable {
         fullScreenOverlay.prefHeightProperty().bind(root.heightProperty());
 
         fullScreenOverlay.getChildren().add(notification);
+        fullScreenOverlay.setManaged(true);  // ADD THIS
+        fullScreenOverlay.setVisible(true);   // ADD THIS
         root.getChildren().add(fullScreenOverlay);
 
         PauseTransition pause = new PauseTransition(Duration.seconds(5));
@@ -537,7 +576,15 @@ public class GuiController implements Initializable {
             if (gameTimer != null) {
                 gameTimer.pause();
             }
-            pauseMenu.setVisible(true);
+
+            // Show pause overlay
+            StackPane pauseOverlay = (StackPane) pauseMenu.getUserData();
+            if (pauseOverlay != null) {
+                pauseOverlay.setManaged(true);
+                pauseOverlay.setVisible(true);
+                pauseOverlay.toFront();
+            }
+
 
             if (inputHandler != null) {
                 inputHandler.setPaused(true);
@@ -549,7 +596,16 @@ public class GuiController implements Initializable {
 
     private void resumeGame() {
         isPause.setValue(false);
-        pauseMenu.setVisible(false);
+
+
+        // Hide pause overlay
+        StackPane pauseOverlay = (StackPane) pauseMenu.getUserData();
+        if (pauseOverlay != null) {
+            pauseOverlay.setVisible(false);
+            pauseOverlay.setManaged(false);
+        }
+
+
         timeLine.play();
         if (gameTimer != null) {
             gameTimer.resume();
