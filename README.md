@@ -1736,13 +1736,6 @@ Sound effects played out of sync with visual events, breaking immersion.
 - Tight audio-visual synchronization
 - Professional feel maintained
 
-
-### eclipse and back text appearing on game board
-- eclipse and back text is present
-- -Tried debugging
-- could not understand the root cause
-- error not in fxml file
-
 ---
 
 ## GitHub Repository Suspicious Activity
